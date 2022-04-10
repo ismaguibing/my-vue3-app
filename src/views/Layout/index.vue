@@ -1,6 +1,7 @@
 <template>
-  <topnav></topnav>
+  <TopNav></TopNav>
   <AppHeader></AppHeader>
+  <StickyHeader></StickyHeader>
   <main class="app-body">
     <RouterView></RouterView>
   </main>
@@ -16,18 +17,20 @@ import { reactive, toRefs, onBeforeMount, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 
 // 组件
-import topnav from '@/components/app-topnav.vue'
+import TopNav from '@/components/app-topnav.vue'
 import AppHeader from './components/app-header.vue'
 import AppFooter from './components/app-footer.vue'
+import StickyHeader from './components/app-header-sticky.vue'
 
 export default {
 
   name: 'Index',
 
   components: {
-    topnav,
+    TopNav,
     AppHeader,
-    AppFooter
+    AppFooter,
+    StickyHeader
   },
 
   setup () {
