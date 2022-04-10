@@ -3,43 +3,19 @@
     <li class="home">
       <RouterLink to="/">首页</RouterLink>
     </li>
-    <li v-for="v in list" :key="v.id">
-      <a href="#">{{v.name}}</a>
-      <div class="layer">
+    <li v-for="v in list" :key="v.id" @mouseenter="show(v)" @mouseleave="hide(v)">
+      <RouterLink :to="`/category/${v.id}`" @click="hide(v)">{{ v.name }}</RouterLink>
+      <div class="layer" :class="{open:v.open}">
         <ul>
           <li v-for="i in v.children" :key="i.id">
-            <a href="#">
+            <RouterLink :to="`/category/sub/${i.id}`" @click="hide(v)">
               <img :src="i.picture" alt="" />
               <p>{{i.name}}</p>
-            </a>
+            </RouterLink>
           </li>
         </ul>
       </div>
     </li>
-    <!-- <li>
-      <a href="#">餐厨</a>
-    </li>
-    <li>
-      <a href="#">居家</a>
-    </li>
-    <li>
-      <a href="#">艺术</a>
-    </li>
-    <li>
-      <a href="#">电器</a>
-    </li>
-    <li>
-      <a href="#">洗护</a>
-    </li>
-    <li>
-      <a href="#">孕婴</a>
-    </li>
-    <li>
-      <a href="#">服装</a>
-    </li>
-    <li>
-      <a href="#">杂货</a>
-    </li> -->
   </ul>
 </template>
 
@@ -60,6 +36,15 @@ export default {
       return store.state.category.list
     })
 
+    //  控制显示隐藏
+    const hide = (v) => {
+      store.commit('category/hide', v)
+    }
+
+    const show = (v) => {
+      store.commit('category/show', v)
+    }
+
     onBeforeMount(() => {
     })
 
@@ -67,7 +52,9 @@ export default {
     })
 
     return {
-      list
+      list,
+      hide,
+      show
     }
   }
 }
@@ -102,14 +89,18 @@ export default {
         color: @xtxColor;
         border-bottom: 1px solid @xtxColor;
       }
-      > .layer {
-        height: 132px;
-        opacity: 1;
-      }
+      //   > .layer {
+      //     height: 132px;
+      //     opacity: 1;
+      //   }
     }
   }
 }
 .layer {
+  &.open {
+    height: 132px;
+    opacity: 1;
+  }
   width: 1240px;
   background-color: #fff;
   position: absolute;

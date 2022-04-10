@@ -2,7 +2,7 @@
   <topnav></topnav>
   <AppHeader></AppHeader>
   <main class="app-body">
-    <router-view></router-view>
+    <RouterView></RouterView>
   </main>
   <AppFooter></AppFooter>
 
