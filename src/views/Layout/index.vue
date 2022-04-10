@@ -21,6 +21,7 @@ import AppHeader from './components/app-header.vue'
 import AppFooter from './components/app-footer.vue'
 
 export default {
+
   name: 'Index',
 
   components: {
@@ -41,7 +42,6 @@ export default {
     // })
 
     return {
-
       //   ...toRefs(data)
     }
   }

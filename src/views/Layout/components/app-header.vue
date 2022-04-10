@@ -21,7 +21,9 @@
 
 <script>
 import AppHeaderNav from './app-header-nav.vue'
+
 export default {
+
   name: 'AppHeader',
 
   components: {

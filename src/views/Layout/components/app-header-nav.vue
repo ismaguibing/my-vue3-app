@@ -24,6 +24,7 @@ import { reactive, toRefs, onBeforeMount, onMounted, computed } from 'vue'
 
 import { useStore } from 'vuex'
 export default {
+
   name: 'AppHeaderNav',
 
   setup () {
