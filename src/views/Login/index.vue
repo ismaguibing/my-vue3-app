@@ -10,10 +10,13 @@ export default {
   name: 'Login',
   setup () {
     const data = reactive({})
+
     onBeforeMount(() => {
     })
+
     onMounted(() => {
     })
+
     return {
       ...toRefs(data)
     }
