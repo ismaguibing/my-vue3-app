@@ -3,20 +3,20 @@
     <li class="home">
       <RouterLink to="/">首页</RouterLink>
     </li>
-    <li>
-      <a href="#">美食</a>
+    <li v-for="v in list" :key="v.id">
+      <a href="#">{{v.name}}</a>
       <div class="layer">
         <ul>
-          <li v-for="i in 10" :key="i">
+          <li v-for="i in v.children" :key="i.id">
             <a href="#">
-              <img src="https://yanxuan.nosdn.127.net/cc361cf40d4f81c7eccefed1ad18face.png?quality=95&imageView" alt="" />
-              <p>果干</p>
+              <img :src="i.picture" alt="" />
+              <p>{{i.name}}</p>
             </a>
           </li>
         </ul>
       </div>
     </li>
-    <li>
+    <!-- <li>
       <a href="#">餐厨</a>
     </li>
     <li>
@@ -39,28 +39,35 @@
     </li>
     <li>
       <a href="#">杂货</a>
-    </li>
+    </li> -->
   </ul>
 </template>
 
 <script>
-import { reactive, toRefs, onBeforeMount, onMounted } from 'vue'
+import { reactive, toRefs, onBeforeMount, onMounted, computed } from 'vue'
+
+import { useStore } from 'vuex'
 export default {
   name: 'AppHeaderNav',
 
   setup () {
     const data = reactive({})
 
+    //  调动vuex actions
+    const store = useStore()
+    store.dispatch('category/getList')
+    const list = computed(() => {
+      return store.state.category.list
+    })
+
     onBeforeMount(() => {
-      console.log('2.组件挂载页面之前执行----onBeforeMount')
     })
 
     onMounted(() => {
-      console.log('3.-组件挂载到页面之后执行-------onMounted')
     })
 
     return {
-      ...toRefs(data)
+      list
     }
   }
 }

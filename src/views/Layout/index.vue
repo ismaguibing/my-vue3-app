@@ -9,8 +9,13 @@
 </template>
 
 <script>
-import { reactive, toRefs, onBeforeMount, onMounted } from 'vue'
 
+import { reactive, toRefs, onBeforeMount, onMounted, computed } from 'vue'
+
+// vuex 使用
+import { useStore } from 'vuex'
+
+// 组件
 import topnav from '@/components/app-topnav.vue'
 import AppHeader from './components/app-header.vue'
 import AppFooter from './components/app-footer.vue'
@@ -25,18 +30,19 @@ export default {
   },
 
   setup () {
-    const data = reactive({})
+    // const data = reactive({})
 
-    onBeforeMount(() => {
-      console.log('2.组件挂载页面之前执行----onBeforeMount')
-    })
+    // onBeforeMount(() => {
+    //   console.log('2.组件挂载页面之前执行----onBeforeMount')
+    // })
 
-    onMounted(() => {
-      console.log('3.-组件挂载到页面之后执行-------onMounted')
-    })
+    // onMounted(() => {
+    //   console.log('3.-组件挂载到页面之后执行-------onMounted')
+    // })
 
     return {
-      ...toRefs(data)
+
+      //   ...toRefs(data)
     }
   }
 }
