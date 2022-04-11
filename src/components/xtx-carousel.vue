@@ -1,5 +1,5 @@
 <template>
-  <div class="xtx-carousel">
+  <div class="xtx-carousel" @mouseenter="stop" @mouseleave="play">
     <ul class="carousel-body">
       <li class="carousel-item" :class="{fade:active===i}" v-for="(v,i) in bannerList" :key="v.id">
         <RouterLink :to="v.hrefUrl">
@@ -47,6 +47,7 @@ export default {
     // 开启自动播放
     const play = () => {
       if (!props.autoplay) return
+      clearInterval(timer) // 保证每次只有一个定时器
       timer = setInterval(() => {
         next()
       }, props.duration)
@@ -85,7 +86,9 @@ export default {
     return {
       active,
       prev,
-      next
+      next,
+      play,
+      stop
     }
   }
 }

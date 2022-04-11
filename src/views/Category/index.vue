@@ -3,25 +3,9 @@
 </template>
 
 <script>
-import { reactive, toRefs, onBeforeMount, onMounted } from 'vue'
-
 export default {
+  name: 'TopCategory'
 
-  name: 'TopCategory',
-
-  setup () {
-    const data = reactive({})
-
-    onBeforeMount(() => {
-    })
-
-    onMounted(() => {
-    })
-
-    return {
-      ...toRefs(data)
-    }
-  }
 }
 
 </script>
