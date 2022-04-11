@@ -15,7 +15,7 @@
 import { useStore } from 'vuex'
 
 // 组件
-import TopNav from '@/components/app-topnav.vue'
+import TopNav from './components/app-topnav.vue'
 import AppHeader from './components/app-header.vue'
 import AppFooter from './components/app-footer.vue'
 import StickyHeader from './components/app-header-sticky.vue'
