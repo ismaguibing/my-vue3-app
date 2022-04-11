@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: 'http://pcapi-xiaotuxian-front.itheima.net/',
+  baseURL: 'https://apipc-xiaotuxian-front.itheima.net',
   timeout: 2000
   // headers: { 'X-Custom-Header': 'foobar' }
 })

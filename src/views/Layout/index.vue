@@ -11,8 +11,6 @@
 
 <script>
 
-import { reactive, toRefs, onBeforeMount, onMounted, computed } from 'vue'
-
 // vuex 使用
 import { useStore } from 'vuex'
 
@@ -34,18 +32,10 @@ export default {
   },
 
   setup () {
-    // const data = reactive({})
-
-    // onBeforeMount(() => {
-    //   console.log('2.组件挂载页面之前执行----onBeforeMount')
-    // })
-
-    // onMounted(() => {
-    //   console.log('3.-组件挂载到页面之后执行-------onMounted')
-    // })
+    const store = useStore()
+    store.dispatch('category/getList')
 
     return {
-      //   ...toRefs(data)
     }
   }
 }

@@ -1,28 +1,27 @@
 <template>
-  <div class="home">首页</div>
+  <div class="page-home">
+    <div class="home-entry">
+      <div class="container">
+        <!-- 左侧分类 -->
+        <HomeCategory />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { reactive, toRefs, onBeforeMount, onMounted } from 'vue'
+
+import HomeCategory from './components/home-category.vue'
 
 export default {
 
   name: 'Home',
 
+  components: {
+    HomeCategory
+  },
+
   setup () {
-    const data = reactive({})
-
-    onBeforeMount(() => {
-      console.log('2.组件挂载页面之前执行----onBeforeMount')
-    })
-
-    onMounted(() => {
-      console.log('3.-组件挂载到页面之后执行-------onMounted')
-    })
-
-    return {
-      ...toRefs(data)
-    }
   }
 }
 

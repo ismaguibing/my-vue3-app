@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, onBeforeMount, onMounted, computed } from 'vue'
+import { computed } from 'vue'
 
 import { useStore } from 'vuex'
 export default {
@@ -28,11 +28,8 @@ export default {
   name: 'AppHeaderNav',
 
   setup () {
-    const data = reactive({})
-
     //  调动vuex actions
     const store = useStore()
-    store.dispatch('category/getList')
     const list = computed(() => {
       return store.state.category.list
     })
@@ -45,12 +42,6 @@ export default {
     const show = (v) => {
       store.commit('category/show', v)
     }
-
-    onBeforeMount(() => {
-    })
-
-    onMounted(() => {
-    })
 
     return {
       list,
