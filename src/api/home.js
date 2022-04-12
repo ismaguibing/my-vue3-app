@@ -29,3 +29,13 @@ export const getHotList = () => {
     url: 'home/hot'
   })
 }
+
+/**
+ * 获取商品数据
+ * @returns Promise
+ */
+export const goodsList = () => {
+  return _axios({
+    url: 'home/goods'
+  })
+}

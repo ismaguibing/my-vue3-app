@@ -22,7 +22,7 @@ export default {
 
     // 获取轮播图
     getBannerList().then(res => {
-      bannerList.value = res.data.result
+      bannerList.value = res.result
     })
 
     return {

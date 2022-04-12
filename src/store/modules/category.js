@@ -32,10 +32,10 @@ export default {
   actions: {
     async  getList ({ commit }) {
       const res = await getCategoryList()
-      res.data.result.forEach(v => {
+      res.result.forEach(v => {
         v.open = false
       })
-      commit('setList', res.data.result)
+      commit('setList', res.result)
     }
   }
 }

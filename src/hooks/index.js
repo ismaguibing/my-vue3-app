@@ -36,11 +36,11 @@ export const useLazyData = (apiFn) => {
   //   isIntersecting   布尔值 返回是否在当前可视区
   const { stop } = useIntersectionObserver(target, ([{ isIntersecting }], observerElement) => {
     if (isIntersecting) {
+      stop() // stop 以停止监听
       // 掉请求获取数据
       apiFn().then(res => {
-        list.value = res.data.result
+        list.value = res.result
       })
-      stop() // stop 以停止监听
     }
   }
   )

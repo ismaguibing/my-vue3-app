@@ -65,7 +65,7 @@ export default {
     })
 
     brandList().then(res => {
-      brand.brands = res.data.result
+      brand.brands = res.result
     })
     const store = useStore()
     const menuList = computed(() => {

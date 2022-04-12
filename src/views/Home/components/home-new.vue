@@ -27,7 +27,6 @@ import HomePanel from './home-panel.vue'
 import HomeSkeleton from './home-skeleton.vue'
 import { useLazyData } from '@/hooks'
 import { getNewList } from '@/api/home'
-// import { ref } from 'vue'
 export default {
   name: 'HomeNew',
 
@@ -37,11 +36,6 @@ export default {
   },
 
   setup () {
-    // const newList = ref([])
-
-    // getNewList().then(res => {
-    //   newList.value = res.data.result
-    // })
     const { list, target } = useLazyData(getNewList)
     return {
       list,
