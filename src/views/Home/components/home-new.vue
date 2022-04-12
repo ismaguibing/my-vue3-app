@@ -5,23 +5,18 @@
       <template #right>
         <XtxMore></XtxMore>
       </template>
-      <ul class="goods-list" v-if="newList.length>0">
-        <li v-for="i in newList" :key="i.id">
-          <RouterLink to="/">
-            <img :src="i.picture" alt="" />
-            <p class="name ellipsis">{{i.name}}</p>
-            <p class="price">&yen;{{i.price}}</p>
-          </RouterLink>
-        </li>
-      </ul>
-
-      <div class="home-skeleton" v-else>
-        <div class="item" v-for="i in 4" :key="i" :style="{ backgroundColor: '#f0f9f4' }">
-          <XtxSkeleton bg="#e4e4e4" width="306px" height="306px" animated />
-          <XtxSkeleton bg="#e4e4e4" width="160px" height="24px" animated />
-          <XtxSkeleton bg="#e4e4e4" width="120px" height="24px" animated />
-        </div>
-      </div>
+      <transition name="fade">
+        <ul class="goods-list" v-if="newList.length>0">
+          <li v-for="i in newList" :key="i.id">
+            <RouterLink to="/">
+              <img :src="i.picture" alt="" />
+              <p class="name ellipsis">{{i.name}}</p>
+              <p class="price">&yen;{{i.price}}</p>
+            </RouterLink>
+          </li>
+        </ul>
+        <HomeSkeleton v-else></HomeSkeleton>
+      </transition>
     </HomePanel>
   </div>
 
@@ -29,6 +24,7 @@
 
 <script>
 import HomePanel from './home-panel.vue'
+import HomeSkeleton from './home-skeleton.vue'
 
 import { getNewList } from '@/api/home'
 import { ref } from 'vue'
@@ -36,7 +32,8 @@ export default {
   name: 'HomeNew',
 
   components: {
-    HomePanel
+    HomePanel,
+    HomeSkeleton
   },
 
   setup () {
