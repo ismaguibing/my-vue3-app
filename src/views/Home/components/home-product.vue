@@ -3,13 +3,13 @@
     <HomePanel :title="i.name" v-for="i in list" :key="i.id">
       <template v-slot:right>
         <div class="sub">
-          <RouterLink to="/" v-for="j in i.children" :key="j.id">{{j.name}}</RouterLink>
+          <RouterLink :to="`/category/sub/${j.id}`" v-for="j in i.children" :key="j.id">{{j.name}}</RouterLink>
         </div>
         <XtxMore />
       </template>
       <div class="box">
         <RouterLink class="cover" to="/">
-          <img :src="i.picture" alt="" />
+          <img :src="i.picture" alt="" style="object-fit:cover;" />
           <strong class="label">
             <span>{{i.name}}</span>
             <span>{{i.saleInfo}}</span>

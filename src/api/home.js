@@ -39,3 +39,13 @@ export const goodsList = () => {
     url: 'home/goods'
   })
 }
+
+/**
+ * 获取专题数据
+ * @returns Promise
+ */
+export const specialList = () => {
+  return _axios({
+    url: 'home/special'
+  })
+}
