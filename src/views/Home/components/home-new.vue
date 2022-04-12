@@ -9,7 +9,7 @@
         <ul class="goods-list" v-if="list.length>0">
           <li v-for="i in list" :key="i.id">
             <RouterLink to="/">
-              <img :src="i.picture" alt="" />
+              <img v-lazy="i.picture" alt="" />
               <p class="name ellipsis">{{i.name}}</p>
               <p class="price">&yen;{{i.price}}</p>
             </RouterLink>

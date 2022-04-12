@@ -3,7 +3,7 @@
     <ul class="carousel-body">
       <li class="carousel-item" :class="{fade:active===i}" v-for="(v,i) in bannerList" :key="v.id">
         <RouterLink :to="v.hrefUrl">
-          <img :src="v.imgUrl" alt="" />
+          <img v-lazy="v.imgUrl" alt="" />
         </RouterLink>
       </li>
     </ul>

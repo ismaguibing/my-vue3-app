@@ -9,7 +9,7 @@
       </template>
       <div class="box">
         <RouterLink class="cover" to="/">
-          <img :src="i.picture" alt="" style="object-fit:cover;" />
+          <img v-lazy="i.picture" alt="" style="object-fit:cover;" />
           <strong class="label">
             <span>{{i.name}}</span>
             <span>{{i.saleInfo}}</span>
@@ -19,7 +19,7 @@
           <li v-for="k in i.goods" :key="k.id">
             <div class="goods-item">
               <RouterLink to="/" class="image">
-                <img :src="k.picture" alt="" />
+                <img v-lazy="k.picture" alt="" />
               </RouterLink>
               <p class="name ellipsis-2">{{k.name}}</p>
               <p class="desc ellipsis">{{k.desc}}</p>

@@ -19,7 +19,7 @@
       <ul>
         <li v-for="i in goodsList?.goods" :key="i.id">
           <RouterLink to="/">
-            <img :src="i.picture" />
+            <img v-lazy="i.picture" />
             <div class="info">
               <p class="name ellipsis-2">{{i.name}}</p>
               <p class="desc ellipsis">{{i.desc}}</p>
@@ -32,7 +32,7 @@
       <ul v-if="goodsList?.brands">
         <li class="brand" v-for="i in goodsList.brands" :key="i.id">
           <RouterLink to="/">
-            <img :src="i.picture" alt="">
+            <img v-lazy="i.picture" alt="">
             <div class="info">
               <p class="place"><i class="iconfont icon-dingwei"></i>{{i.place}}</p>
               <p class="name ellipsis">{{i.name}}</p>
