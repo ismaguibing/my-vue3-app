@@ -1,26 +1,31 @@
 <template>
   <div class="account-box">
     <div class="toggle">
-      <a href="javascript:;" v-if="isMasgLogin" @click="isMasgLogin = false">
+      <a href="javascript:;" v-if="isMsgLogin" @click="isMsgLogin = false">
         <i class="iconfont icon-user"></i> 使用账号登录
       </a>
-      <a href="javascript:;" v-else @click="isMasgLogin = true">
+      <a href="javascript:;" v-else @click="isMsgLogin = true">
         <i class="iconfont icon-msg"></i> 使用短信登录
       </a>
     </div>
-    <div class="form">
-      <template v-if="!isMasgLogin">
+    <Form :validation-schema="rules" class="form" v-slot="{ errors }">
+      <template v-if="!isMsgLogin">
         <div class="form-item">
           <div class="input">
             <i class="iconfont icon-user"></i>
-            <input type="text" placeholder="请输入用户名或手机号" />
+            <Field v-model="form.account" type="text" placeholder="请输入用户名或手机号" name="account" autocomplete="off" :class="{ error: errors.account }" />
           </div>
-          <!-- <div class="error"><i class="iconfont icon-warning" />请输入手机号</div> -->
+          <div class="error" v-if="errors.account">
+            <i class="iconfont icon-warning" />{{ errors.account }}
+          </div>
         </div>
         <div class="form-item">
           <div class="input">
             <i class="iconfont icon-lock"></i>
-            <input type="password" placeholder="请输入密码" />
+            <Field v-model="form.password" type="password" name="password" autocomplete='off' placeholder="请输入密码" :class="{ error: errors.password }" />
+          </div>
+          <div class="error" v-if="errors.password">
+            <i class="iconfont icon-warning" />{{ errors.password }}
           </div>
         </div>
       </template>
@@ -28,28 +33,37 @@
         <div class="form-item">
           <div class="input">
             <i class="iconfont icon-user"></i>
-            <input type="text" placeholder="请输入手机号" />
+            <Field name="mobile" v-model="form.mobile" type="text" placeholder="请输入手机号" :class="{ error: errors.mobile }" autocomplete="off" />
+          </div>
+          <div class="error" v-if="errors.mobile">
+            <i class="iconfont icon-warning" />{{ errors.mobile }}
           </div>
         </div>
         <div class="form-item">
           <div class="input">
             <i class="iconfont icon-code"></i>
-            <input type="password" placeholder="请输入验证码" />
+            <Field name="code" v-model="form.code" type="password" placeholder="请输入验证码" :class="{ error: errors.code }" autocomplete="off" />
             <span class="code">发送验证码</span>
+          </div>
+          <div class="error" v-if="errors.code">
+            <i class="iconfont icon-warning" />{{ errors.code }}
           </div>
         </div>
       </template>
       <div class="form-item">
         <div class="agree">
-          <XtxCheckbox v-model="check" />
+          <XtxCheckbox v-model="form.isAgree"></XtxCheckbox>
           <span>我已同意</span>
           <a href="javascript:;">《隐私条款》</a>
           <span>和</span>
           <a href="javascript:;">《服务条款》</a>
         </div>
+        <div class="error" v-if="errors.isAgree">
+          <i class="iconfont icon-warning" />{{ errors.isAgree }}
+        </div>
       </div>
       <a href="javascript:;" class="btn">登录</a>
-    </div>
+    </Form>
     <div class="action">
       <img src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_7.png" alt="" />
       <div class="url">
@@ -61,18 +75,59 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
+import { Field, Form } from 'vee-validate'
 export default {
   name: 'LoginForm',
 
+  components: {
+    Field,
+    Form
+  },
   setup () {
-    const isMasgLogin = ref(false)
+    const isMsgLogin = ref(false)
+    // 表单校验规则
+    const rules = {
+      account (value) {
+        // value是将来使用该规则的表单元素的值
+        // 1. 必填
+        // 2. 6-20个字符，需要以字母开头
+        // 如何反馈校验成功还是失败，返回true才是成功，其他情况失败，返回失败原因。
+        if (!value) return '请输入用户名'
+        if (!/^[a-zA-Z]\w{5,19}$/.test(value)) return '字母开头且6-20个字符'
+        return true
+      },
+      password (value) {
+        if (!value) return '请输入密码'
+        if (!/^\w{6,24}$/.test(value)) return '密码是6-24个字符'
+        return true
+      },
+      mobile (value) {
+        if (!value) return '请输入手机号'
+        if (!/^1[3-9]\d{9}$/.test(value)) return '手机号格式错误'
+        return true
+      },
+      code (value) {
+        if (!value) return '请输入验证码'
+        if (!/^\d{6}$/.test(value)) return '验证码是6个数字'
+        return true
+      },
+      isAgree (value) {
+        if (!value) return '请勾选同意用户协议'
+        return true
+      }
+    }
 
-    const check = ref(false)
+    const form = reactive({
+      account: '',
+      password: '',
+      isAgree: false
+    })
 
     return {
-      isMasgLogin,
-      check
+      isMsgLogin,
+      form,
+      rules
     }
   }
 }
