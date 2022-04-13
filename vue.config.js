@@ -8,5 +8,9 @@ module.exports = {
         path.join(__dirname, './src/assets/styles/mixins.less')
       ]
     }
+  },
+  devServer: {
+    port: 9000,
+    open: true
   }
 }
