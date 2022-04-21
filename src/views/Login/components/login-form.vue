@@ -8,7 +8,7 @@
         <i class="iconfont icon-msg"></i> 使用短信登录
       </a>
     </div>
-    <Form :validation-schema="rules" class="form" v-slot="{ errors }">
+    <Form :validation-schema="rules" ref="target" class="form" v-slot="{ errors }">
       <template v-if="!isMsgLogin">
         <div class="form-item">
           <div class="input">
@@ -52,7 +52,8 @@
       </template>
       <div class="form-item">
         <div class="agree">
-          <XtxCheckbox v-model="form.isAgree"></XtxCheckbox>
+          <!-- <Field as='XtxCheckBox' name='isAgree' v-model="form.isAgree"></Field> -->
+          <Field as="XtxCheckbox" name="isAgree" v-model="form.isAgree" />
           <span>我已同意</span>
           <a href="javascript:;">《隐私条款》</a>
           <span>和</span>
@@ -62,7 +63,7 @@
           <i class="iconfont icon-warning" />{{ errors.isAgree }}
         </div>
       </div>
-      <a href="javascript:;" class="btn">登录</a>
+      <a href="javascript:;" class="btn" @click="login">登录</a>
     </Form>
     <div class="action">
       <img src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_7.png" alt="" />
@@ -75,8 +76,19 @@
 </template>
 
 <script>
-import { reactive, ref } from 'vue'
-import { Field, Form } from 'vee-validate'
+import { reactive, ref, watch } from 'vue'
+import { Field, Form, configure } from 'vee-validate'
+import { account, code, mobile, isAgree, password } from '@/utils/validate'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { Message } from '@/components/index.js'
+import { userAccountLogin } from '@/api/user'
+
+configure({
+  validateOnBlur: false,
+  validateOnInput: true
+})
+
 export default {
   name: 'LoginForm',
 
@@ -85,38 +97,8 @@ export default {
     Form
   },
   setup () {
+    const target = ref(null)
     const isMsgLogin = ref(false)
-    // 表单校验规则
-    const rules = {
-      account (value) {
-        // value是将来使用该规则的表单元素的值
-        // 1. 必填
-        // 2. 6-20个字符，需要以字母开头
-        // 如何反馈校验成功还是失败，返回true才是成功，其他情况失败，返回失败原因。
-        if (!value) return '请输入用户名'
-        if (!/^[a-zA-Z]\w{5,19}$/.test(value)) return '字母开头且6-20个字符'
-        return true
-      },
-      password (value) {
-        if (!value) return '请输入密码'
-        if (!/^\w{6,24}$/.test(value)) return '密码是6-24个字符'
-        return true
-      },
-      mobile (value) {
-        if (!value) return '请输入手机号'
-        if (!/^1[3-9]\d{9}$/.test(value)) return '手机号格式错误'
-        return true
-      },
-      code (value) {
-        if (!value) return '请输入验证码'
-        if (!/^\d{6}$/.test(value)) return '验证码是6个数字'
-        return true
-      },
-      isAgree (value) {
-        if (!value) return '请勾选同意用户协议'
-        return true
-      }
-    }
 
     const form = reactive({
       account: '',
@@ -124,10 +106,43 @@ export default {
       isAgree: false
     })
 
+    //  切换tab form数据清空
+    watch(isMsgLogin, () => {
+      form.account = null
+      form.password = null
+      form.mobile = null
+      form.code = null
+    })
+
+    // 表单校验规则
+    const rules = reactive({ account, code, mobile, isAgree, password })
+
+    const router = useRouter()
+    const store = useStore()
+    const route = useRoute()
+
+    // login
+    //   登录的请求, 先搞一个message组件
+    const login = async () => {
+      const res = await target.value.validate()
+      if (!res) return
+      try {
+        const res = await userAccountLogin(form.account, form.password)
+        store.commit('user/setProFile', res.result)
+        Message({ type: 'success', text: '登录成功' })
+        // 跳转到首页
+        router.push('/')
+      } catch (e) {
+        Message({ type: 'error', text: e.response.data.message })
+      }
+    }
+
     return {
       isMsgLogin,
       form,
-      rules
+      target,
+      rules,
+      login
     }
   }
 }
@@ -173,6 +188,7 @@ export default {
           width: 100%;
           &.error {
             border-color: @priceColor;
+            // border-color: red;
           }
           &.active,
           &:focus {

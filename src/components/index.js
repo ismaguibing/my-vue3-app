@@ -2,6 +2,9 @@
 // import XtxCarousel from './xtx-carousel.vue'
 // import XtxMore from './xtx-more.vue'
 
+import { h, render } from 'vue'
+import XtxMessage from './xtx-message'
+
 // 统一注册组件
 export default {
   install (app) {
@@ -15,7 +18,7 @@ export default {
     // { 2: './xtx-skeleton.vue' }
 
     ctx.keys().forEach(v => {
-      console.log(ctx(v).default) // 当前的这个组件 （获取到的所有组件）
+    //   console.log(ctx(v).default) // 当前的这个组件 （获取到的所有组件）
 
       const component = ctx(v).default
       app.component(component.name, component)
@@ -49,5 +52,26 @@ export default {
         observer.observe(el)
       }
     })
+
+    // 增加全局方法  app.config.globalProperties  全局挂载
+    app.config.globalProperties.$message = Message
   }
+}
+// 动态的给body创建一个盒子
+const div = document.createElement('div')
+div.setAttribute('class', 'xtx-message-container')
+document.body.appendChild(div)
+let timer = null
+
+export function Message ({ type, text, duration = 2000 }) {
+  // 渲染XtxMessage组件
+  // <XtxMessage :type="type" :text="text"></XtxMessage>
+  const vNode = h(XtxMessage, { type, text })
+  render(vNode, div)
+  // 开启延时器
+  clearTimeout(timer)
+  timer = setTimeout(() => {
+    // 删除虚拟DOM
+    render(null, div)
+  }, duration)
 }

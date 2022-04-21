@@ -17,6 +17,7 @@
 
 <script>
 import { onMounted, onUnmounted, ref } from 'vue'
+
 export default {
   name: 'XtxCarousel',
 
@@ -57,6 +58,7 @@ export default {
     const stop = () => {
       clearInterval(timer)
     }
+
     onMounted(() => {
       play()
     })
@@ -100,11 +102,13 @@ export default {
   min-width: 300px;
   min-height: 150px;
   position: relative;
+
   .carousel {
     &-body {
       width: 100%;
       height: 100%;
     }
+
     &-item {
       width: 100%;
       height: 100%;
@@ -113,15 +117,18 @@ export default {
       top: 0;
       opacity: 0;
       transition: opacity 0.5s linear;
+
       &.fade {
         opacity: 1;
         z-index: 1;
       }
+
       img {
         width: 100%;
         height: 100%;
       }
     }
+
     &-indicator {
       position: absolute;
       left: 0;
@@ -129,6 +136,7 @@ export default {
       z-index: 2;
       width: 100%;
       text-align: center;
+
       span {
         display: inline-block;
         width: 12px;
@@ -136,14 +144,17 @@ export default {
         background: rgba(0, 0, 0, 0.2);
         border-radius: 50%;
         cursor: pointer;
+
         ~ span {
           margin-left: 12px;
         }
+
         &.active {
           background: #fff;
         }
       }
     }
+
     &-btn {
       width: 44px;
       height: 44px;
@@ -157,14 +168,17 @@ export default {
       line-height: 44px;
       opacity: 0;
       transition: all 0.5s;
+
       &.prev {
         left: 20px;
       }
+
       &.next {
         right: 20px;
       }
     }
   }
+
   &:hover {
     .carousel-btn {
       opacity: 1;
