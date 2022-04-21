@@ -28,15 +28,20 @@
 <script>
 import { computed } from 'vue-demi'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { Message } from '@/components/index'
 export default {
   name: 'AppTopnav',
 
   setup () {
     const store = useStore()
+    const router = useRouter()
 
     // 退出登录
     const logout = () => {
       store.commit('user/logout')
+      router.push('/login')
+      Message({ tyep: 'success', text: '退出成功' })
     }
 
     const proFile = computed(() => {
