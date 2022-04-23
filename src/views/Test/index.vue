@@ -1,40 +1,105 @@
 <template>
-  <div>
-    <button @click="show = !show">annuity</button>
-    <transition>
-      <div class="box" v-if="show"></div>
-    </transition>
+  <div class="container">
+    <!-- Show number of percentages -->
+    <div class="container__percentages">
+      ...
+    </div>
+
+    <!-- The curve -->
+    <div class="container__curve">
+      <!-- The first half -->
+      <div class="container__half container__half--first"></div>
+
+      <!-- The second half -->
+      <div class="container__half container__half--second"></div>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { reactive, toRefs, onBeforeMount, onMounted } from 'vue'
 export default {
-  name: 'Test',
-
+  name: '',
   setup () {
-    const show = ref(true)
-
+    const data = reactive({})
+    onBeforeMount(() => {
+      console.log('2.组件挂载页面之前执行----onBeforeMount')
+    })
+    onMounted(() => {
+      console.log('3.-组件挂载到页面之后执行-------onMounted')
+    })
     return {
-      show
+      ...toRefs(data)
     }
   }
 }
 
 </script>
 <style scoped lang='less'>
-.box {
-  width: 100px;
-  height: 100px;
-  background: pink;
+.container {
+  position: relative;
 }
-.v-enter-from {
-  transform: translateX(-100%);
+
+.container__percentages {
+  /* Center the content */
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  /* Rounded border */
+  border: 12px solid rgba(0, 0, 0, 0.3);
+  border-radius: 9999px;
+
+  /* Size */
+  height: 128px;
+  width: 128px;
 }
-.v-enter-active {
-  transition: all 0.5s;
+
+.container__curve {
+  /* Position */
+  left: 0;
+  position: absolute;
+  top: 0;
+
+  /* Take full size */
+  height: 100%;
+  width: 100%;
+
+  /* If percentages is less than 50 */
+  clip: rect(0px, 128px, 128px, 64px);
+
+  /* If percentages is greater than or equals to 50 */
+  clip: rect(auto, auto, auto, auto);
 }
-.v-enter-to {
-  transform: translateX(0%);
+
+.container__half {
+  /* Take full size */
+  height: 100%;
+  position: absolute;
+  width: 100%;
+
+  /*
+    Background color of curve.
+    The border width should be the same as the area showing the percentages
+    */
+  border: 12px solid rgb(0, 68, 158);
+  border-radius: 9999px;
+}
+
+.container__half--first {
+  /* Position */
+  clip: rect(0px, 64px, 128px, 0px);
+  transform: rotate(162deg); /* Number of percentages * 360 / 100 */
+}
+
+.container__half--second {
+  /* Position */
+  clip: rect(0px, 64px, 128px, 0px);
+
+  /* If percentages is less than 50 */
+  transform: rotate(0deg);
+
+  /* If percentages is greater than or equals to 50 */
+  transform: rotate(180deg);
 }
 </style>

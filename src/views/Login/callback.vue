@@ -24,10 +24,14 @@
 <script>
 import LoginHeader from './components/login-header'
 import LoginFooter from './components/login-footer'
-
 import callbackBind from './components/callback-bind.vue'
 import callbakPatch from './components/callback-patch.vue'
+import { Message } from '@/components/index'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import { ref } from 'vue'
+import { userQQLogin } from '@/api/user'
+
 export default {
   name: 'LoginCallback',
   components: {
@@ -36,8 +40,29 @@ export default {
     callbackBind,
     callbakPatch
   },
+
   setup () {
     const hasAccount = ref(true)
+    const router = useRouter()
+    const store = useStore()
+
+    // 获取QQ登录的信息 window.QC.Login.check()  判断是否QQ登录完成 为true 登录成功
+    if (window.QC.Login.check()) {
+      // 获取到了  openId
+      window.QC.Login.getMe(async openId => {
+        try {
+          const res = await userQQLogin(openId)
+          console.log(res)
+          Message({ text: '登录成功' })
+          store.commit('user/setProFile', res.result)
+          router.push('/')
+        } catch (e) {
+          console.log(e)
+          Message({ type: 'error', text: 'qq未绑定' })
+        }
+      })
+    }
+
     return {
       hasAccount
     }
