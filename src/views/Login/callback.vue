@@ -12,7 +12,7 @@
       </a>
     </nav>
     <div class="tab-content" v-if="hasAccount">
-      <callbackBind></callbackBind>
+      <callbackBind :unionId='unionId'></callbackBind>
     </div>
     <div class="tab-content" v-else>
       <callbakPatch></callbakPatch>
@@ -46,11 +46,14 @@ export default {
     const router = useRouter()
     const store = useStore()
 
+    const unionId = ref(null)
+
     // 获取QQ登录的信息 window.QC.Login.check()  判断是否QQ登录完成 为true 登录成功
     if (window.QC.Login.check()) {
       // 获取到了  openId
       window.QC.Login.getMe(async openId => {
         try {
+          unionId.value = openId
           const res = await userQQLogin(openId)
           console.log(res)
           Message({ text: '登录成功' })
@@ -64,7 +67,8 @@ export default {
     }
 
     return {
-      hasAccount
+      hasAccount,
+      unionId
     }
   }
 }

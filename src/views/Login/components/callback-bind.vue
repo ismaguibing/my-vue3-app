@@ -45,6 +45,13 @@ export default {
     Field
   },
 
+  props: {
+    unionId: {
+      type: String,
+      require: true
+    }
+  },
+
   setup (props) {
     const qqInfo = reactive({
       nickname: '',
@@ -88,7 +95,10 @@ export default {
     const router = useRouter()
 
     const bind = async () => {
+      const valid = target.value.validate()
+      if (!valid) return
       const res = await userQQBindLogin({
+        unionId: props.unionId,
         mobile: form.mobile,
         code: form.code
       })
