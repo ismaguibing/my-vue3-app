@@ -15,7 +15,7 @@
       <callbackBind :unionId='unionId'></callbackBind>
     </div>
     <div class="tab-content" v-else>
-      <callbakPatch></callbakPatch>
+      <callbakPatch :unionId='unionId'></callbakPatch>
     </div>
   </section>
   <LoginFooter></LoginFooter>

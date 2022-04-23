@@ -94,3 +94,35 @@ export const userQQBindLogin = ({ unionId, mobile, code }) => {
     }
   })
 }
+
+/**
+ * 获取QQ完善信息的时候短信验证码
+ * @param {String} mobile - 手机号
+ * @returns promise
+ */
+export const userQQPatchCode = mobile => {
+  return _axios({
+    url: '/register/code',
+    method: 'get',
+    params: {
+      mobile
+    }
+  })
+}
+
+/**
+   * QQ登录-完善信息
+   * @param {String} unionId - QQ唯一标识，openId
+   * @param {String} mobile - 手机号
+   * @param {String} code - 验证码
+   * @param {String} account - 帐号
+   * @param {String} password - 密码
+   * @returns
+   */
+export const userQQPatchLogin = (unionId, data) => {
+  return _axios({
+    url: `/login/social/${unionId}/complement`,
+    method: 'post',
+    data: data
+  })
+}
