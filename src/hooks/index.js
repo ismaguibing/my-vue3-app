@@ -1,6 +1,6 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
-import { useIntersectionObserver } from '@vueuse/core'
+import { useIntersectionObserver, useIntervalFn } from '@vueuse/core'
 
 // 获取x,y滚动的距离
 export const userScroll = () => {
@@ -49,4 +49,29 @@ export const useLazyData = (apiFn) => {
     list,
     target
   }
+}
+
+/**
+ * 封装倒计时定时器
+ */
+export const useCounter = (num = 60) => {
+  const time = ref(0)
+
+  const { pause, resume } = useIntervalFn(() => {
+    time.value--
+    if (time.value <= 0) {
+      pause()
+    }
+  }, 1000, { immediate: false })
+
+  const start = () => {
+    time.value = num
+    resume()
+  }
+
+  onBeforeUnmount(() => {
+    pause()
+  })
+
+  return { time, start }
 }

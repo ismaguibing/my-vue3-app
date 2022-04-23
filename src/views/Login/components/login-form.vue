@@ -43,7 +43,7 @@
           <div class="input">
             <i class="iconfont icon-code"></i>
             <Field name="code" v-model="form.code" type="password" placeholder="请输入验证码" :class="{ error: errors.code }" autocomplete="off" />
-            <span class="code">发送验证码</span>
+            <span class="code" @click="send">{{ time === 0 ? '发送验证码' : `${time}秒后发送` }}</span>
           </div>
           <div class="error" v-if="errors.code">
             <i class="iconfont icon-warning" />{{ errors.code }}
@@ -76,14 +76,15 @@
 </template>
 
 <script>
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch, onUnmounted } from 'vue'
 import { Field, Form, configure } from 'vee-validate'
 import { account, code, mobile, isAgree, password } from '@/utils/validate'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { Message } from '@/components/index.js'
-import { userAccountLogin } from '@/api/user'
-
+import { userAccountLogin, userMobileLoginMsg, userMobileLogin } from '@/api/user'
+import { useIntervalFn } from '@vueuse/core'
+import { useCounter } from '@/hooks'
 configure({
   validateOnBlur: false,
   validateOnInput: true
@@ -106,6 +107,8 @@ export default {
       isAgree: false
     })
 
+    // const time = ref(0)
+
     //  切换tab form数据清空
     watch(isMsgLogin, () => {
       form.account = null
@@ -121,16 +124,40 @@ export default {
     const store = useStore()
     const route = useRoute()
 
-    // login
-    //   登录的请求, 先搞一个message组件
-    const login = async () => {
-      const res = await target.value.validate()
-      if (!res) return
+    const { time, start } = useCounter()
+
+    // 发送验证码
+    const send = async () => {
+      // 校验手机号是否符合规则
+      const isMobile = rules.mobile(form.mobile)
+      // setFieldError 设置错误的信息
+      if (isMobile !== true) return target.value.setFieldError('mobile', isMobile)
+
       try {
-        const res = await userAccountLogin(form.account, form.password)
+        // 当倒计时大于0 直接return 不发送请求
+        if (time.value > 0) return
+        await userMobileLoginMsg(form.mobile)
+        Message({ type: 'success', text: '发送成功' })
+        start()
+      } catch (e) {
+        Message({ type: 'error', text: '不要频繁发送请求' })
+      }
+    }
+
+    //  login
+    //  登录的请求, 先搞一个message组件
+    const login = async () => {
+      const v = await target.value.validate()
+      if (!v) return
+      try {
+        let res = null
+        if (isMsgLogin.value) {
+          res = await userMobileLogin(form.mobile, form.code)
+        } else {
+          res = await userAccountLogin(form.account, form.password)
+        }
         store.commit('user/setProFile', res.result)
         Message({ type: 'success', text: '登录成功' })
-        // 跳转到首页
         router.push('/')
       } catch (e) {
         Message({ type: 'error', text: e.response.data.message })
@@ -142,7 +169,9 @@ export default {
       form,
       target,
       rules,
-      login
+      login,
+      send,
+      time
     }
   }
 }

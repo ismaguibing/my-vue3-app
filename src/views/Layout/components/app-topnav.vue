@@ -4,7 +4,7 @@
       <ul>
         <template v-if='proFile.id'>
           <li>
-            <a href="javascript:;"><i class="iconfont icon-user"></i>{{proFile.nickname}}</a>
+            <a href="javascript:;"><i class="iconfont icon-user"></i>{{proFile.account}}</a>
           </li>
           <li><a href="javascript:;" @click="logout">退出登录</a></li>
         </template>
