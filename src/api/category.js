@@ -35,3 +35,17 @@ export const findTopCategory = (id) => {
     }
   })
 }
+
+/**
+ *  获取二级分类筛选条件数据
+ * @param {String} id -  二级分类ID
+ */
+export const findSubCategoryFilter = (id) => {
+  return _axios({
+    method: 'get',
+    url: '/category/sub/filter',
+    params: {
+      id
+    }
+  })
+}

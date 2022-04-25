@@ -17,7 +17,6 @@ export default {
 
     // 显示
     show (state, { id }) {
-      console.log(id)
       const target = state.list.find(v => v.id === id)
       target.open = true
     },

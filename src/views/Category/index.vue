@@ -4,7 +4,9 @@
     <!-- <XtxBread :icon='图标类名'> -->
     <XtxBread>
       <XtxBreadItem to='/'>首页</XtxBreadItem>
-      <XtxBreadItem>{{category?.name}}</XtxBreadItem>
+      <transition name="fade-right" mode="out-in">
+        <XtxBreadItem :key="category?.id">{{category?.name}}</XtxBreadItem>
+      </transition>
     </XtxBread>
 
     <!-- 轮播图 -->
@@ -72,6 +74,8 @@ export default {
     // })
 
     watch(() => route.params.id, value => {
+      // 如果切换到了2级分类，那么久不应该发送请求了
+      if (route.path.includes('/sub')) return
       findTopCategory(value).then(data => {
         subList.value = data.result.children
       })
