@@ -1,5 +1,5 @@
 <template>
-  <div class="category">二级分类组件</div>
+  <div class="container">二级分类组件</div>
 </template>
 
 <script>
