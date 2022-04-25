@@ -21,3 +21,17 @@ export const brandList = function (limit = 6) {
     url: `/home/brand?limit=${limit}`
   })
 }
+
+/**
+ * 获取单个顶级分类信息
+ * @param {String} id - 顶级分类ID
+ */
+export const findTopCategory = (id) => {
+  return _axios({
+    method: 'get',
+    url: '/category',
+    params: {
+      id
+    }
+  })
+}

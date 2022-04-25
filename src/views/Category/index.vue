@@ -13,7 +13,7 @@
     <!-- 所有二级分类 -->
     <div class="sub-list">
       <h3>全部分类</h3>
-      <ul>
+      <ul style="height:160px;">
         <li v-for="item in category?.children" :key="item.id">
           <a href="javascript:;">
             <img :src="item.picture" />
@@ -22,22 +22,41 @@
         </li>
       </ul>
     </div>
+
+    <!-- 分类关联商品 -->
+    <div class="ref-goods" v-for="item in subList" :key="item.id">
+      <div class="head">
+        <h3>- {{ item.name }} -</h3>
+        <p class="tag">{{ item.desc }}</p>
+        <XtxMore />
+      </div>
+      <div class="body">
+        <GoodsItem v-for="good in item.goods" :good="good" :key="good.id" />
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { getBannerList } from '@/api/home'
-
+import { findTopCategory } from '@/api/category'
+import GoodsItem from './components/goods-item.vue'
 export default {
   name: 'TopCategory',
+
+  components: {
+    GoodsItem
+  },
 
   setup () {
     const store = useStore()
     const route = useRoute()
     const slides = ref([])
+    const subList = ref([])
 
     const category = computed(() => {
       return store.state.category.list.find(v => v.id === route.params.id)
@@ -48,10 +67,20 @@ export default {
       slides.value = res.result
     })
 
+    // findTopCategory(route.params.id).then(data => {
+    //   subList.value = data.result.children
+    // })
+
+    watch(() => route.params.id, value => {
+      findTopCategory(value).then(data => {
+        subList.value = data.result.children
+      })
+    }, { immediate: true })
+
     return {
       category,
-      slides
-
+      slides,
+      subList
     }
   }
 
@@ -95,6 +124,32 @@ export default {
         }
       }
     }
+  }
+}
+
+.ref-goods {
+  background-color: #fff;
+  margin-top: 20px;
+  position: relative;
+  .head {
+    .xtx-more {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    .tag {
+      text-align: center;
+      color: #999;
+      font-size: 20px;
+      position: relative;
+      top: -20px;
+    }
+  }
+  .body {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding: 0 65px 30px;
   }
 }
 </style>
