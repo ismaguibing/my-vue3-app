@@ -20,8 +20,11 @@
       <div class="goods-info">
         <div class="media">
           <GoodsImage :images="goods?.mainPictures"></GoodsImage>
+          <GoodsSales />
         </div>
-        <div class="spec"></div>
+        <div class="spec">
+          <GoodsName :goods="goods" />
+        </div>
       </div>
       <!-- 商品推荐 -->
       <GoodsRelevant />
@@ -43,6 +46,8 @@
 <script>
 import GoodsRelevant from './components/goods-relevant'
 import GoodsImage from './components/goods-image.vue'
+import GoodsSales from './components/goods-sales'
+import GoodsName from './components/goods-name'
 import { useRoute } from 'vue-router'
 import { findGoods } from '@/api/product'
 import { ref, watch } from 'vue'
@@ -50,7 +55,9 @@ export default {
   name: 'XtxGoodsPage',
   components: {
     GoodsRelevant,
-    GoodsImage
+    GoodsImage,
+    GoodsSales,
+    GoodsName
   },
   setup () {
     const goods = useGood()
