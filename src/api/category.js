@@ -49,3 +49,16 @@ export const findSubCategoryFilter = (id) => {
     }
   })
 }
+
+/**
+ * 获取二级分类下的商品数据
+ * @param {*} data
+ * @returns
+ */
+export const findSubCategoryGoods = (data) => {
+  return _axios({
+    method: 'post',
+    url: '/category/goods/temporary',
+    data
+  })
+}

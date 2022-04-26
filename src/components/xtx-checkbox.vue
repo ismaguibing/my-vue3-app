@@ -8,7 +8,8 @@
   </div>
 </template>
 <script>
-import { ref, watch } from 'vue'
+// import { ref, watch } from 'vue'
+import { useVModel } from '@vueuse/core'
 export default {
   name: 'XtxCheckbox',
 
@@ -18,16 +19,13 @@ export default {
       type: Boolean
     }
   },
+
   setup (props, { emit }) {
-    const checked = ref(false)
-
-    watch(() => props.modelValue, value => {
-      checked.value = value
-    })
-
+    const checked = useVModel(props, 'modelValue', emit)
     const change = () => {
-      //   checked.value = !checked.value
-      emit('update:modelValue', !checked.value)
+      const value = !checked.value
+      checked.value = value
+      emit('change', value)
     }
 
     return {

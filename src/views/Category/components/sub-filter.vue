@@ -5,7 +5,7 @@
       <!-- 品牌独立渲染 -->
       <div class="head">品牌：</div>
       <div class="body">
-        <a href="javascript:;" v-for="item in list.brands" :key="item.id" :class="{ active: item.id === list.brands.selected }" @click="list.brands.selected = item.id">
+        <a href="javascript:;" v-for="item in list.brands" :key="item.id" :class="{ active: item.id === list.brands.selected }" @click="changeBrand(item.id)">
           {{ item.name }}
         </a>
       </div>
@@ -14,7 +14,7 @@
       <!-- 品牌独立渲染 -->
       <div class="head">{{ item.name }}：</div>
       <div class="body">
-        <a href="javascript:;" v-for="sub in item.properties" :key="sub.id" :class="{ active: sub.id === item.properties.selected }" @click="item.properties.selected = sub.id">
+        <a href="javascript:;" v-for="sub in item.properties" :key="sub.id" :class="{ active: sub.id === item.selected }" @click="changeAttr(item,sub.id)">
           {{ sub.name }}
         </a>
       </div>
@@ -28,25 +28,61 @@ import { useRoute } from 'vue-router'
 export default {
   name: 'SubFilter',
 
-  setup () {
+  setup (props, { emit }) {
     const list = ref(null)
     const route = useRoute()
 
-    watch(() => route.params.id, value => {
-      if (!route.path.includes('/sub')) return
-      findSubCategoryFilter(value).then(({ result }) => {
-        result.brands.unshift({ id: null, name: '全部' })
-        result.brands.selected = null
-        result.saleProperties.forEach(item => {
+    watch(
+      () => route.params.id,
+      async value => {
+        if (!route.path.includes('/sub')) return
+        // 发送请求获取数据
+        const res = await findSubCategoryFilter(value)
+        res.result.brands.unshift({ id: null, name: '全部' })
+        // 默认选中的品牌的id
+        res.result.brands.selected = null
+        res.result.saleProperties.forEach(item => {
           item.properties.unshift({ id: null, name: '全部' })
-          item.properties.selected = null
+          // 销售属性默认选中的id
+          item.selected = null
         })
-        list.value = result
+        list.value = res.result
+      },
+      {
+        immediate: true
+      }
+    )
+
+    const getFilterParams = () => {
+      const filterParams = {}
+      const attrs = []
+      filterParams.brandId = list.value.brands.selected
+      list.value.saleProperties.forEach(p => {
+        const attr = p.properties.find(v => v.id === p.selected)
+        if (attr && attr.id !== undefined) {
+          attrs.push({ groupName: p.name, propertyName: attr.name })
+        }
       })
-    }, { immediate: true })
+      if (attrs.length) filterParams.attrs = attrs
+      return filterParams
+    }
+
+    const changeBrand = id => {
+      list.value.brands.selected = id
+      // 需要把参数传给父组件
+      emit('changeFilter', getFilterParams())
+    }
+    const changeAttr = (item, id) => {
+      console.log(item, id)
+      item.selected = id
+      // 需要把参数传给父组件
+      emit('changeFilter', getFilterParams())
+    }
 
     return {
-      list
+      list,
+      changeBrand,
+      changeAttr
     }
   }
 }
