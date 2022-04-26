@@ -18,7 +18,7 @@
         <ul class="goods-list">
           <li v-for="k in i.goods" :key="k.id">
             <div class="goods-item">
-              <RouterLink to="/" class="image">
+              <RouterLink :to="`/product/${k.id}`" class="image">
                 <img v-lazy="k.picture" alt="" />
               </RouterLink>
               <p class="name ellipsis-2">{{k.name}}</p>
