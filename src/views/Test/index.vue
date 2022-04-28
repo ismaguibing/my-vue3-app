@@ -1,5 +1,12 @@
 <template>
-  <div class="box"></div>
+  <div class="container">
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+  </div>
 </template>
 
 <script>
@@ -25,10 +32,28 @@ export default {
 
 </script>
 <style scoped lang='less'>
-.box {
-  width: 400px;
-  height: 400px;
-  background: pink;
-  margin: 200px auto 0;
+@media (min-width: 768px) {
+  .container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.container {
+  display: grid;
+  .item {
+    width: 100px;
+    height: 100px;
+    background: red;
+  }
+}
+
+.conainer {
+  gap: 1rem;
 }
 </style>
