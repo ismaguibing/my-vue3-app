@@ -26,6 +26,8 @@
           <GoodsName :goods="goods" />
           <!-- 商品规格 -->
           <GoodsSku :goods="goods" v-if="goods?.id" @changeSku='changeSku'></GoodsSku>
+          <!-- 商品数量 -->
+          <XtxNumbox v-model="num"></XtxNumbox>
         </div>
       </div>
       <!-- 商品推荐 -->
@@ -65,6 +67,7 @@ export default {
   },
   setup () {
     const goods = useGood()
+    const num = ref(1)
 
     const changeSku = (sku) => {
       if (sku.id) {
@@ -76,7 +79,8 @@ export default {
 
     return {
       goods,
-      changeSku
+      changeSku,
+      num
     }
   }
 }

@@ -1,16 +1,52 @@
 <template>
   <div class="xtx-numbox">
-    <div class="label">数量</div>
+    <div class="label">{{label}}</div>
     <div class="numbox">
-      <a href="javascript:;">-</a>
-      <input type="text" readonly value="1">
-      <a href="javascript:;">+</a>
+      <a href="javascript:;" @click="changeNum(-1)">-</a>
+      <input type="text" readonly :value="num">
+      <a href="javascript:;" @click="changeNum(1)">+</a>
     </div>
   </div>
 </template>
 <script>
+import { useVModel } from '@vueuse/core'
 export default {
-  name: 'XtxNumbox'
+  name: 'XtxNumbox',
+
+  props: {
+    modelValue: {
+      type: Number,
+      default: 1
+    },
+    label: {
+      type: String
+    },
+    min: {
+      type: Number,
+      default: 1
+    },
+    max: {
+      type: Number,
+      default: 100
+    }
+  },
+
+  setup (props, { emit }) {
+    const num = useVModel(props, 'modelValue', emit)
+
+    const changeNum = (v) => {
+      const newValue = num.value + v
+      if (newValue < props.min) return
+      if (newValue > props.max) return
+      num.value = newValue
+      emit('change', newValue)
+    }
+
+    return {
+      num,
+      changeNum
+    }
+  }
 }
 </script>
 <style scoped lang="less">
