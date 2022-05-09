@@ -25,7 +25,7 @@
         <div class="spec">
           <GoodsName :goods="goods" />
           <!-- 商品规格 -->
-          <GoodsSku :goods="goods" v-if="goods?.id"></GoodsSku>
+          <GoodsSku :goods="goods" v-if="goods?.id" @changeSku='changeSku'></GoodsSku>
         </div>
       </div>
       <!-- 商品推荐 -->
@@ -65,8 +65,18 @@ export default {
   },
   setup () {
     const goods = useGood()
+
+    const changeSku = (sku) => {
+      if (sku.id) {
+        goods.value.price = sku.price
+        goods.value.oldPrice = sku.oldPrice
+        goods.value.inventory = sku.inventory
+      }
+    }
+
     return {
-      goods
+      goods,
+      changeSku
     }
   }
 }

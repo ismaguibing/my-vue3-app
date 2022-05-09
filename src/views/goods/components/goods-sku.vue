@@ -23,7 +23,7 @@ export default {
     skuId: String
   },
 
-  setup (props) {
+  setup (props, { emit }) {
     // const pathMap = reactive({})
     // spec: 规格
     //  val: 规格的值
@@ -43,11 +43,20 @@ export default {
       }
       // 改变按钮的禁用状态
       updateDisableedStatus(props.goods.specs, pathMap)
+      // 子传父的方式 把选择的sku的信息传递给父组件
+      const array = getSelectedSpec(props.goods.specs).filter(v => v)
+
+      if (array.length === props.goods.specs.length) {
+        //   选择了完成的规格
+
+        const skuId = pathMap[array.join('★')]
+
+        const sku = props.goods.skus.find(v => v.id === skuId[0])
+
+        emit('changeSku', sku)
+      }
     }
     const pathMap = getPathMap(props.goods.skus)
-
-    // 禁用按钮
-    updateDisableedStatus(props.goods.specs, pathMap)
 
     // 如果有skuId 就需要设置默认选中
     if (props.skuId) {
@@ -58,6 +67,9 @@ export default {
         v.values.find(a => a.name === name).selected = true
       })
     }
+
+    // 禁用按钮
+    updateDisableedStatus(props.goods.specs, pathMap)
 
     return {
       changeSelected
