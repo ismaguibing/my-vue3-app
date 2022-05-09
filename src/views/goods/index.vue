@@ -27,7 +27,9 @@
           <!-- 商品规格 -->
           <GoodsSku :goods="goods" v-if="goods?.id" @changeSku='changeSku'></GoodsSku>
           <!-- 商品数量 -->
-          <XtxNumbox v-model="num"></XtxNumbox>
+          <XtxNumbox v-model="num" label='数量'></XtxNumbox>
+          <!-- 加入购物车 -->
+          <XtxButton type="primary" style="margin-top:20px;">加入购物车</XtxButton>
         </div>
       </div>
       <!-- 商品推荐 -->
