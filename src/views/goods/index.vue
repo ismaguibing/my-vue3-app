@@ -38,12 +38,15 @@
       <div class="goods-footer">
         <div class="goods-article">
           <!-- 商品+评价 -->
-          <div class="goods-tabs"></div>
+          <GoodsTabs></GoodsTabs>
           <!-- 注意事项 -->
-          <div class="goods-warn"></div>
+          <GoodsWarn></GoodsWarn>
         </div>
         <!-- 24热榜+专题推荐 -->
-        <div class="goods-aside"></div>
+        <!-- <div class="goods-aside"></div> -->
+        <div class="goods-aside">
+          <GoodsHot v-for="item in hotArr" :type="item.id" :title="item.title" :Key="item.id"></GoodsHot>
+        </div>
       </div>
     </div>
   </div>
@@ -55,9 +58,12 @@ import GoodsImage from './components/goods-image.vue'
 import GoodsSales from './components/goods-sales'
 import GoodsName from './components/goods-name'
 import GoodsSku from './components/goods-sku.vue'
+import GoodsTabs from './components/goods-tabs.vue'
+import GoodsWarn from './components/goods-warn.vue'
+import GoodsHot from './components/goods-hot.vue'
 import { useRoute } from 'vue-router'
 import { findGoods } from '@/api/product'
-import { ref, watch } from 'vue'
+import { provide, ref, watch } from 'vue'
 export default {
   name: 'XtxGoodsPage',
   components: {
@@ -65,11 +71,29 @@ export default {
     GoodsImage,
     GoodsSales,
     GoodsName,
-    GoodsSku
+    GoodsSku,
+    GoodsTabs,
+    GoodsWarn,
+    GoodsHot
   },
   setup () {
     const goods = useGood()
     const num = ref(1)
+
+    const hotArr = ref([
+      {
+        id: 1,
+        title: '24小时热销榜'
+      },
+      {
+        id: 2,
+        title: '周热销榜'
+      },
+      {
+        id: 3,
+        title: '总热销榜'
+      }
+    ])
 
     const changeSku = (sku) => {
       if (sku.id) {
@@ -79,10 +103,14 @@ export default {
       }
     }
 
+    // 提供商品数据
+    provide('goods', goods)
+
     return {
       goods,
       changeSku,
-      num
+      num,
+      hotArr
     }
   }
 }
