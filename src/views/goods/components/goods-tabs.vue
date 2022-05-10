@@ -2,14 +2,14 @@
   <div class="goods-tabs">
     <nav>
       <a :class="{ active: activeName === 'GoodsDetail' }" href="javascript:;" @click="clickTab('GoodsDetail')">商品详情</a>
-      <a :class="{ active: activeName === 'GoodsComment' }" href="javascript:;" @click="clickTab('GoodsComment')">商品评价<span>(500+)</span></a>
+      <a :class="{ active: activeName === 'GoodsComment' }" href="javascript:;" @click="clickTab('GoodsComment')">商品评价<span>({{goods?.commentCount}})</span></a>
     </nav>
     <!-- 这个位置显示对应的组件 GoodsDetail 或者 GoodsComment -->
     <component :is="activeName"></component>
   </div>
 </template>
 <script>
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import GoodsDetail from './goods-detail.vue'
 import GoodsComment from './goods-comment.vue'
 export default {
@@ -21,6 +21,8 @@ export default {
   },
 
   setup () {
+    const goods = inject('goods')
+
     const activeName = ref('GoodsDetail')
 
     const clickTab = (name) => {
@@ -29,7 +31,8 @@ export default {
 
     return {
       clickTab,
-      activeName
+      activeName,
+      goods
     }
   }
 }
