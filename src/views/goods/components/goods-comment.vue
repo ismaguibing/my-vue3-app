@@ -13,38 +13,37 @@
       <div class="tags">
         <div class="dt">大家都在说：</div>
         <div class="dd">
-          <a v-for="(item, index) in commentInfo.tags" :key="item.title" href="javascript:;" :class="{ active: currentIndex === index }" @click="currentIndex = index">
+          <a v-for="(item, index) in commentInfo.tags" :key="item.title" href="javascript:;" :class="{ active: currentIndex === index }" @click="changeTag(index)">
             {{item.title}}({{item.tagCount}}) </a>
         </div>
       </div>
     </div>
+    <!-- 排序 -->
     <div class="sort">
       <span>排序：</span>
-      <a href="javascript:;" class="active">默认</a>
-      <a href="javascript:;">最新</a>
-      <a href="javascript:;">最热</a>
+      <a @click="changeSort(null)" href="javascript:;" :class="{active:reqParams.sortField===null}">默认</a>
+      <a @click="changeSort('praiseCount')" href="javascript:;" :class="{active:reqParams.sortField==='praiseCount'}">最热</a>
+      <a @click="changeSort('createTime')" href="javascript:;" :class="{active:reqParams.sortField==='createTime'}">最新</a>
     </div>
 
     <!-- 列表 -->
     <div class="list">
-      <div class="item">
+      <div class="item" v-for="item in commentList" :key="item.id">
         <div class="user">
-          <img src="http://zhoushugang.gitee.io/erabbit-client-pc-static/uploads/avatar_1.png" alt="">
-          <span>兔****m</span>
+          <img :src="item.member.avatar" alt="">
+          <span>{{formatNickName(item.member.nickname)}}</span>
         </div>
         <div class="body">
           <div class="score">
-            <i class="iconfont icon-wjx01"></i>
-            <i class="iconfont icon-wjx01"></i>
-            <i class="iconfont icon-wjx01"></i>
-            <i class="iconfont icon-wjx01"></i>
-            <i class="iconfont icon-wjx02"></i>
-            <span class="attr">颜色：黑色 尺码：M</span>
+            <i v-for="i in item.score" :key="i+'1'" class="iconfont icon-wjx01"></i>
+            <i v-for="i in 5-item.score" :key="i+'2'" class="iconfont icon-wjx02"></i>
+            <span class="attr">{{item.orderInfo.specs.reduce((p,v,i)=>`${p}${v.name}: ${v.nameValue}  `,"")}}</span>
           </div>
-          <div class="text">网易云app上这款耳机非常不错 新人下载网易云购买这款耳机优惠大 而且耳机🎧确实正品 音质特别好 戴上这款耳机 听音乐看电影效果声音真是太棒了 无线方便 小盒自动充电 最主要是质量好音质棒 想要买耳机的放心拍 音效巴巴滴 老棒了</div>
+          <div class="text">{{item.content}}</div>
+          <GoodsCommentImage v-if="item.pictures.length" :pictures='item.pictures'></GoodsCommentImage>
           <div class="time">
-            <span>2020-10-10 10:11:22</span>
-            <span class="zan"><i class="iconfont icon-dianzan"></i>100</span>
+            <span>{{item.createTime}}</span>
+            <span class="zan"><i class="iconfont icon-dianzan"></i> {{item.praiseCount}}</span>
           </div>
         </div>
       </div>
@@ -52,14 +51,20 @@
   </div>
 </template>
 <script>
-import { findCommentInfoByGoods } from '@/api/goods'
-import { ref, watch } from 'vue'
+import { findCommentInfoByGoods, findCommentListByGoods } from '@/api/goods'
+import { ref, watch, reactive } from 'vue'
 import { useRoute } from 'vue-router'
+import GoodsCommentImage from './goods-comment-image.vue'
 export default {
   name: 'GoodsComment',
 
+  components: {
+    GoodsCommentImage
+  },
+
   setup () {
     const commentInfo = ref([])
+    const commentList = ref([])
     const currentIndex = ref(0)
     const route = useRoute()
 
@@ -69,9 +74,57 @@ export default {
       res.result.tags.unshift({ title: '全部', tagCount: res.result.evaluateCount })
       commentInfo.value = res.result
     }, { immediate: true })
+
+    // 筛选条件准备
+    const reqParams = reactive({
+      page: 1,
+      pageSize: 10,
+      hasPicture: false,
+      tag: null,
+      sortField: null,
+      sortMethod: 'desc'
+    })
+
+    const changeTag = (index) => {
+      currentIndex.value = index
+      // 修改reqParams的值
+      if (index === 0) {
+        // 点击了全部评价
+        reqParams.hasPicture = false
+        reqParams.tag = null
+      } else if (index === 1) {
+        // 点击有图
+        reqParams.hasPicture = true
+        reqParams.tag = null
+      } else {
+        // 点击其他tag
+        reqParams.hasPicture = false
+        reqParams.tag = commentInfo.value.tags[index].title
+      }
+    }
+
+    const changeSort = (type) => {
+      reqParams.sortField = type
+    }
+
+    // 格式化用户名
+    const formatNickName = (name) => {
+      return name.slice(0, 1) + '*****' + name.slice(-1)
+    }
+
+    watch([reqParams, () => route.params.id], async () => {
+      const res = await findCommentListByGoods(route.params.id, reqParams)
+      commentList.value = res.result.items
+    }, { immediate: true })
+
     return {
       commentInfo,
-      currentIndex
+      currentIndex,
+      reqParams,
+      changeSort,
+      changeTag,
+      commentList,
+      formatNickName
     }
   }
 }
