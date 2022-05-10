@@ -149,6 +149,7 @@ function getSelectedSpec (specs) {
 .sku-state-mixin () {
   border: 1px solid #e4e4e4;
   margin-right: 10px;
+  margin-bottom: 5px;
   cursor: pointer;
   &.selected {
     border-color: @xtxColor;
