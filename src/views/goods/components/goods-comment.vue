@@ -28,7 +28,7 @@
 
     <!-- 列表 -->
     <div class="list">
-      <div class="item" v-for="item in commentList" :key="item.id">
+      <div class="item" v-for="item in commentList?.items" :key="item.id">
         <div class="user">
           <img :src="item.member.avatar" alt="">
           <span>{{formatNickName(item.member.nickname)}}</span>
@@ -48,6 +48,7 @@
         </div>
       </div>
     </div>
+    <XtxPagination :total='commentList.counts' @current-change='currentChange' :current='commentList.page-0' :size='commentList.pageSize-0'></XtxPagination>
   </div>
 </template>
 <script>
@@ -112,9 +113,13 @@ export default {
       return name.slice(0, 1) + '*****' + name.slice(-1)
     }
 
+    const currentChange = (v) => {
+      reqParams.page = v
+    }
+
     watch([reqParams, () => route.params.id], async () => {
       const res = await findCommentListByGoods(route.params.id, reqParams)
-      commentList.value = res.result.items
+      commentList.value = res.result
     }, { immediate: true })
 
     return {
@@ -124,7 +129,8 @@ export default {
       changeSort,
       changeTag,
       commentList,
-      formatNickName
+      formatNickName,
+      currentChange
     }
   }
 }
