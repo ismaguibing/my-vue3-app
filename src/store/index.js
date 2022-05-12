@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import category from './modules/category'
 import user from './modules/user'
+import cart from './modules/cart'
 
 export default createStore({
   // 严格模式
@@ -9,14 +10,15 @@ export default createStore({
 
   plugins: [createPersistedState({
     key: 'rabbit-vue-hm-83',
-    paths: ['user']
+    paths: ['user', 'cart']
     // 可以指定存储在哪里
     // storage: sessionstorage / localstorage
   })],
 
   modules: {
     category,
-    user
+    user,
+    cart
   }
 
 })

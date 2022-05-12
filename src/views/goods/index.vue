@@ -29,7 +29,7 @@
           <!-- 商品数量 -->
           <XtxNumbox v-model="num" label='数量'></XtxNumbox>
           <!-- 加入购物车 -->
-          <XtxButton type="primary" style="margin-top:20px;">加入购物车</XtxButton>
+          <XtxButton type="primary" style="margin-top:20px;" @click="addCart">加入购物车</XtxButton>
         </div>
       </div>
       <!-- 商品推荐 -->
@@ -64,6 +64,8 @@ import GoodsHot from './components/goods-hot.vue'
 import { useRoute } from 'vue-router'
 import { findGoods } from '@/api/product'
 import { provide, ref, watch } from 'vue'
+import { Message } from '@/components'
+import { useStore } from 'vuex'
 export default {
   name: 'XtxGoodsPage',
   components: {
@@ -77,8 +79,10 @@ export default {
     GoodsHot
   },
   setup () {
+    const store = useStore()
     const goods = useGood()
     const num = ref(1)
+    const currentSku = ref({})
 
     const hotArr = ref([
       {
@@ -100,17 +104,39 @@ export default {
         goods.value.price = sku.price
         goods.value.oldPrice = sku.oldPrice
         goods.value.inventory = sku.inventory
+        currentSku.value = sku
       }
     }
 
     // 提供商品数据
     provide('goods', goods)
 
+    // 加入购物车
+    const addCart = async () => {
+      if (!currentSku.value.id) return Message({ type: 'warning', text: '请补充完整信息' })
+      await store.dispatch('cart/cartInsert', {
+        id: goods.value.id,
+        name: goods.value.name,
+        picture: goods.value.picture,
+        price: currentSku.value.price,
+        count: num.value,
+        skuId: currentSku.value.id,
+        attrsText: currentSku.value.specs.reduce((prev, v) => `${prev} ${v.name}:${v.valueName}`, ''),
+        selected: false,
+        nowPrice: currentSku.value.price,
+        stock: currentSku.value.inventory,
+        isEffective: true
+      })
+      Message({ type: 'success', text: '加入购物车成功' })
+    }
+
     return {
       goods,
       changeSku,
       num,
-      hotArr
+      hotArr,
+      addCart,
+      currentSku
     }
   }
 }

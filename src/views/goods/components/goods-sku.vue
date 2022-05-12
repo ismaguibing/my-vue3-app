@@ -54,6 +54,8 @@ export default {
         const sku = props.goods.skus.find(v => v.id === skuId[0])
 
         emit('changeSku', sku)
+      } else {
+        emit('changeSku', {})
       }
     }
     const pathMap = getPathMap(props.goods.skus)
