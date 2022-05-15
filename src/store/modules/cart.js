@@ -1,3 +1,4 @@
+import { getNewCartGoods } from '@/api/cart.js'
 export default {
   namespaced: true,
 
@@ -14,6 +15,19 @@ export default {
         state.list.splice(idx, 1)
       }
       state.list.unshift(payload)
+    },
+
+    updateCart (state, goods) {
+      const sku = state.list.find(item => item.skuId === goods.skuId)
+      sku.isEffective = goods.isEffective
+      sku.nowPrice = goods.nowPrice
+      sku.stock = goods.stock
+    },
+
+    // 删除购物车商品
+    deleteCart (state, skuId) {
+      const index = state.list.findIndex(item => item.skuId === skuId)
+      state.list.splice(index, 1)
     }
   },
 
@@ -30,7 +44,45 @@ export default {
           resolve()
         }
       })
+    },
+
+    // 更新购物车中的所有购物信息
+    updateCart (context, payload) {
+      return new Promise((resolve, reject) => {
+        if (context.rootState.user.proFile.token) {
+          // todo  成功调 resolve  失败调 reject
+
+        } else {
+          const reqArr = context.state.list.map(v => {
+            return getNewCartGoods(v.skuId)
+          })
+
+          Promise.all(reqArr).then(res => {
+            res.forEach((v, i) => {
+              context.commit('updateCart', {
+                skuId: context.state.list[i].skuId,
+                ...v.result
+              })
+            })
+            resolve()
+          })
+        }
+      })
+    },
+
+    // 删除购物车商品
+    deleteCart (ctx, skuId) {
+      return new Promise((resolve, reject) => {
+        if (ctx.rootState.user.proFile.token) {
+          // 登录 TODO
+        } else {
+          // 本地
+          ctx.commit('deleteCart', skuId)
+          resolve()
+        }
+      })
     }
+
   },
 
   getters: {
@@ -45,6 +97,27 @@ export default {
     // 有效商品总金额
     validAmount (state, getters) {
       return getters.validList.reduce((p, c) => p + c.nowPrice * 100 * c.count, 0) / 100
+    },
+
+    // 无效商品列表
+    invalidList (state) {
+      return state.list.filter(item => !(item.stock > 0 && item.isEffective))
+    },
+    // 选中商品列表
+    selectedList (state, getters) {
+      return getters.validList.filter(item => item.selected)
+    },
+    // 选中商品件数
+    selectedTotal (state, getters) {
+      return getters.selectedList.reduce((p, c) => p + c.count, 0)
+    },
+    // 选中商品总金额
+    selectedAmount (state, getters) {
+      return getters.selectedList.reduce((p, c) => p + (c.nowPrice * 100 * c.count), 0) / 100
+    },
+    // 是否全选
+    isCheckAll (state, getters) {
+      return getters.validList.length === getters.selectedList.length && getters.selectedList.length !== 0
     }
   }
 }

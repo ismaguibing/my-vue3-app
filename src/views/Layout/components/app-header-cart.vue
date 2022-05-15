@@ -3,7 +3,7 @@
     <a class="curr" href="javascript:;">
       <i class="iconfont icon-cart"></i><em>{{validTotal}}</em>
     </a>
-    <div class="layer">
+    <div class="layer" v-if="validTotal && $route.path !== '/cart'">
       <div class="list">
         <div class="item" v-for="i in validList" :key="i">
           <RouterLink to="">
@@ -17,7 +17,7 @@
               <p class="count">x{{i.count}}</p>
             </div>
           </RouterLink>
-          <i class="iconfont icon-close-new"></i>
+          <i class="iconfont icon-close-new" @click="deleteCart(i.skuId)"></i>
         </div>
       </div>
       <div class="foot">
@@ -25,7 +25,7 @@
           <p>共 {{validTotal}} 件商品</p>
           <p>&yen;{{validAmount}}</p>
         </div>
-        <XtxButton type="plain">去购物车结算</XtxButton>
+        <XtxButton type="plain" @click="$router.push('/cart')">去购物车结算</XtxButton>
       </div>
     </div>
   </div>
@@ -33,7 +33,7 @@
 <script>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
-
+import { Message } from '@/components'
 export default {
   name: 'AppHeaderCart',
 
@@ -43,10 +43,22 @@ export default {
     const validList = computed(() => store.getters['cart/validList'])
     const validAmount = computed(() => store.getters['cart/validAmount'])
 
+    store.dispatch('cart/updateCart')
+
+    const deleteCart = skuId => {
+      store.dispatch('cart/deleteCart', skuId).then(() => {
+        Message({ type: 'success', text: '删除成功' })
+      }).catch(e => {
+        console.log(e)
+        Message({ type: 'error', text: '删除失败' })
+      })
+    }
+
     return {
       validList,
       validTotal,
-      validAmount
+      validAmount,
+      deleteCart
     }
   }
 }
