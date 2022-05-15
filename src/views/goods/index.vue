@@ -117,7 +117,7 @@ export default {
       await store.dispatch('cart/cartInsert', {
         id: goods.value.id,
         name: goods.value.name,
-        picture: goods.value.picture,
+        picture: goods.value.mainPictures[0],
         price: currentSku.value.price,
         count: num.value,
         skuId: currentSku.value.id,

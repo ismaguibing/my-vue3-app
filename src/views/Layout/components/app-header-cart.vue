@@ -1,20 +1,20 @@
 <template>
   <div class="cart">
     <a class="curr" href="javascript:;">
-      <i class="iconfont icon-cart"></i><em>2</em>
+      <i class="iconfont icon-cart"></i><em>{{validTotal}}</em>
     </a>
     <div class="layer">
       <div class="list">
-        <div class="item" v-for="i in 4" :key="i">
+        <div class="item" v-for="i in validList" :key="i">
           <RouterLink to="">
-            <img src="https://yanxuan-item.nosdn.127.net/ead73130f3dbdb3cabe1c7b0f4fd3d28.png" alt="">
+            <img :src="i.picture" alt="">
             <div class="center">
-              <p class="name ellipsis-2">和手足干裂说拜拜 ingrams手足皲裂修复霜</p>
-              <p class="attr ellipsis">颜色：修复绿瓶 容量：150ml</p>
+              <p class="name ellipsis-2">{{i.name}}</p>
+              <p class="attr ellipsis">{{i.attrsText}}</p>
             </div>
             <div class="right">
-              <p class="price">&yen;45.00</p>
-              <p class="count">x2</p>
+              <p class="price">&yen;{{i.nowPrice}}</p>
+              <p class="count">x{{i.count}}</p>
             </div>
           </RouterLink>
           <i class="iconfont icon-close-new"></i>
@@ -22,8 +22,8 @@
       </div>
       <div class="foot">
         <div class="total">
-          <p>共 3 件商品</p>
-          <p>&yen;135.00</p>
+          <p>共 {{validTotal}} 件商品</p>
+          <p>&yen;{{validAmount}}</p>
         </div>
         <XtxButton type="plain">去购物车结算</XtxButton>
       </div>
@@ -31,8 +31,24 @@
   </div>
 </template>
 <script>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
 export default {
-  name: 'AppHeaderCart'
+  name: 'AppHeaderCart',
+
+  setup () {
+    const store = useStore()
+    const validTotal = computed(() => store.getters['cart/validTotal'])
+    const validList = computed(() => store.getters['cart/validList'])
+    const validAmount = computed(() => store.getters['cart/validAmount'])
+
+    return {
+      validList,
+      validTotal,
+      validAmount
+    }
+  }
 }
 </script>
 <style scoped lang="less">
