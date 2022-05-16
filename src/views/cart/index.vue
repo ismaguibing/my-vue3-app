@@ -10,7 +10,7 @@
           <thead>
             <tr>
               <th width="120">
-                <XtxCheckbox>全选</XtxCheckbox>
+                <XtxCheckbox :modelValue='isCheckAll' @change="changeAll">全选</XtxCheckbox>
               </th>
               <th width="400">商品信息</th>
               <th width="220">单价</th>
@@ -21,28 +21,29 @@
           </thead>
           <!-- 有效商品 -->
           <tbody>
-            <tr v-for="i in 3" :key="i">
+            <tr v-for="i in $store.getters['cart/validList']" :key="i.skuId">
               <td>
-                <XtxCheckbox />
+                <XtxCheckbox :modelValue='i.selected' @change="changeChecked(i.skuId, $event)" />
               </td>
               <td>
                 <div class="goods">
-                  <RouterLink to="/"><img src="https://yanxuan-item.nosdn.127.net/13ab302f8f2c954d873f03be36f8fb03.png" alt=""></RouterLink>
+                  <RouterLink :to="`/product/${i.id}`"><img :src="i.picture" alt=""></RouterLink>
                   <div>
-                    <p class="name ellipsis">和手足干裂说拜拜 ingrams手足皲裂修复霜</p>
+                    <p class="name ellipsis">{{i.name}}</p>
                     <!-- 选择规格组件 -->
+                    <p class="attr">{{i.attrsText}}</p>
                   </div>
                 </div>
               </td>
               <td class="tc">
-                <p>&yen;200.00</p>
-                <p>比加入时降价 <span class="red">&yen;20.00</span></p>
+                <p>&yen;{{i.nowPrice}}</p>
+                <p v-if="i.price-i.nowPrice>0">比加入时降价 <span class="red">&yen;{{i.price-i.nowPrice}}</span></p>
               </td>
               <td class="tc">
-                <XtxNumbox />
+                <XtxNumbox :modelValue='i.count' />
               </td>
               <td class="tc">
-                <p class="f16 red">&yen;200.00</p>
+                <p class="f16 red">&yen;{{i.price*i.count}}</p>
               </td>
               <td class="tc">
                 <p><a href="javascript:;">移入收藏夹</a></p>
@@ -53,30 +54,30 @@
           </tbody>
           <!-- 无效商品 -->
           <tbody>
-            <tr>
+            <tr v-if="$store.getters['cart/invalidList'].length>0">
               <td colspan="6">
                 <h3 class="tit">失效商品</h3>
               </td>
             </tr>
-            <tr v-for="i in 3" :key="i">
+            <tr v-for="i in $store.getters['cart/invalidList']" :key="i">
               <td>
                 <XtxCheckbox style="color:#eee;" />
               </td>
               <td>
                 <div class="goods">
-                  <RouterLink to="/"><img src="https://yanxuan-item.nosdn.127.net/13ab302f8f2c954d873f03be36f8fb03.png" alt=""></RouterLink>
+                  <RouterLink :to="`/product/${i.id}`"><img :src="i.picture" alt=""></RouterLink>
                   <div>
-                    <p class="name ellipsis">和手足干裂说拜拜 ingrams手足皲裂修复霜</p>
-                    <p class="attr">颜色：粉色 尺寸：14cm 产地：中国</p>
+                    <p class="name ellipsis">{{i.name}}</p>
+                    <p class="attr">{{i.attrsText}}</p>
                   </div>
                 </div>
               </td>
               <td class="tc">
-                <p>&yen;200.00</p>
+                <p>&yen;{{i.nowPrice}}</p>
               </td>
-              <td class="tc">1</td>
+              <td class="tc">{{i.count}}</td>
               <td class="tc">
-                <p>&yen;200.00</p>
+                <p>&yen;{{i.nowPrice*i.count}}</p>
               </td>
               <td class="tc">
                 <p><a class="green" href="javascript:;">删除</a></p>
@@ -95,8 +96,8 @@
           <a href="javascript:;">清空失效商品</a>
         </div>
         <div class="total">
-          共 7 件商品，已选择 2 件，商品合计：
-          <span class="red">¥400</span>
+          共 {{validTotal}}件商品，已选择 {{selectedTotal}} 件，商品合计：
+          <span class="red">¥{{selectedAmount}}</span>
           <XtxButton type="primary">下单结算</XtxButton>
         </div>
       </div>
@@ -107,9 +108,46 @@
 </template>
 <script>
 import GoodRelevant from '@/views/goods/components/goods-relevant'
+import { useStore } from 'vuex'
+import { computed } from 'vue'
 export default {
   name: 'XtxCartPage',
-  components: { GoodRelevant }
+
+  components: {
+    GoodRelevant
+  },
+
+  setup () {
+    const store = useStore()
+    const invalidList = computed(() => store.getters['cart/invalidList'])
+    const validTotal = computed(() => store.getters['cart/validTotal'])
+    const selectedList = computed(() => store.getters['cart/selectedList'])
+    const selectedTotal = computed(() => store.getters['cart/selectedTotal'])
+    const selectedAmount = computed(() => store.getters['cart/selectedAmount'])
+    const isCheckAll = computed(() => store.getters['cart/isCheckAll'])
+
+    const changeChecked = (v, event) => {
+      store.dispatch('cart/updateChange', {
+        skuId: v,
+        selected: event
+      })
+    }
+
+    const changeAll = (event) => {
+      store.dispatch('cart/changeAll', { selected: event })
+    }
+
+    return {
+      invalidList,
+      selectedList,
+      selectedTotal,
+      selectedAmount,
+      validTotal,
+      isCheckAll,
+      changeChecked,
+      changeAll
+    }
+  }
 }
 </script>
 <style scoped lang="less">

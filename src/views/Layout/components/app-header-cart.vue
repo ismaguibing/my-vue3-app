@@ -43,7 +43,8 @@ export default {
     const validList = computed(() => store.getters['cart/validList'])
     const validAmount = computed(() => store.getters['cart/validAmount'])
 
-    store.dispatch('cart/updateCart')
+    // 过滤无效
+    // store.dispatch('cart/updateCart')
 
     const deleteCart = skuId => {
       store.dispatch('cart/deleteCart', skuId).then(() => {

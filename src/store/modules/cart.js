@@ -19,15 +19,28 @@ export default {
 
     updateCart (state, goods) {
       const sku = state.list.find(item => item.skuId === goods.skuId)
-      sku.isEffective = goods.isEffective
-      sku.nowPrice = goods.nowPrice
-      sku.stock = goods.stock
+      //   sku.isEffective = goods.isEffective
+      //   sku.nowPrice = goods.nowPrice
+      //   sku.stock = goods.stock
+      for (const k in goods) {
+        // 遍历goods对象
+        if (goods[k] !== null && goods[k] !== undefined && goods[k] !== '') {
+          sku[k] = goods[k]
+        }
+      }
     },
 
     // 删除购物车商品
     deleteCart (state, skuId) {
       const index = state.list.findIndex(item => item.skuId === skuId)
       state.list.splice(index, 1)
+    },
+
+    // changAll
+    changAll (state, val) {
+      state.list.forEach(v => {
+        v.selected = val
+      })
     }
   },
 
@@ -70,6 +83,18 @@ export default {
       })
     },
 
+    //
+    updateChange (context, payload) {
+      return new Promise((resolve, reject) => {
+        if (context.rootState.user.proFile.token) {
+          // todo
+        } else {
+          context.commit('updateCart', payload)
+          resolve()
+        }
+      })
+    },
+
     // 删除购物车商品
     deleteCart (ctx, skuId) {
       return new Promise((resolve, reject) => {
@@ -81,6 +106,15 @@ export default {
           resolve()
         }
       })
+    },
+
+    // changeAll
+    changeAll (context, payload) {
+      if (context.rootState.user.proFile.token) {
+
+      } else {
+        context.commit('changAll', payload.selected)
+      }
     }
 
   },
