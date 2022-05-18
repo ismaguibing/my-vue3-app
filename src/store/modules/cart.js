@@ -108,6 +108,21 @@ export default {
       })
     },
 
+    // 批量删除
+    batchDelete (context, isClear) {
+      return new Promise((resolve, reject) => {
+        if (context.rootState.user.proFile.token) {
+          // 登录 TODO
+        } else {
+          // 本地
+          context.getters[isClear ? 'invalidList' : 'selectedList'].forEach(v => {
+            context.commit('deleteCart', v.skuId)
+          })
+          resolve()
+        }
+      })
+    },
+
     // changeAll
     changeAll (context, payload) {
       if (context.rootState.user.proFile.token) {

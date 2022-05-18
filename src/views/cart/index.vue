@@ -96,9 +96,9 @@
       <div class="action">
         <div class="batch">
           <XtxCheckbox :modelValue="isCheckAll" @change="changeAll">全选</XtxCheckbox>
-          <a href="javascript:;">删除商品</a>
+          <a href="javascript:;" @click="batchDelete(false)">删除商品</a>
           <a href="javascript:;">移入收藏夹</a>
-          <a href="javascript:;">清空失效商品</a>
+          <a href="javascript:;" @click="batchDelete(true)">清空失效商品</a>
         </div>
         <div class="total">
           共 {{validTotal}}件商品，已选择 {{selectedTotal}} 件，商品合计：
@@ -154,6 +154,16 @@ export default {
       }
     }
 
+    // 批量删除商品 或者删除无效商品   isClear 是否清空无效商品
+    const batchDelete = async (isClear) => {
+      try {
+        await confirm({ text: `您确定从购物车删除${isClear ? '失效' : '选中'}的商品吗？` })
+      } catch {
+        console.log('点击了取消')
+      }
+      store.dispatch('cart/batchDelete', isClear)
+    }
+
     return {
       invalidList,
       selectedList,
@@ -163,7 +173,8 @@ export default {
       isCheckAll,
       changeChecked,
       changeAll,
-      del
+      del,
+      batchDelete
     }
   }
 }
