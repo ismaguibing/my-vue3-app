@@ -4,6 +4,7 @@
 
 import { h, render } from 'vue'
 import XtxMessage from './xtx-message'
+import XtxConfirm from './xtx-confirm.vue'
 
 // 统一注册组件
 export default {
@@ -74,4 +75,24 @@ export function Message ({ type, text, duration = 2000 }) {
     // 删除虚拟DOM
     render(null, div)
   }, duration)
+}
+
+const confirmDiv = document.createElement('div')
+confirmDiv.setAttribute('class', 'xtx-confirm-container')
+document.body.appendChild(confirmDiv)
+export function confirm ({ title, text }) {
+  return new Promise((resolve, reject) => {
+    const confirmCallback = () => {
+      resolve()
+      render(null, confirmDiv)
+    }
+
+    const cancelCallback = () => {
+      reject(new Error('点击了取消'))
+      render(null, confirmDiv)
+    }
+    //   <XtxConfirm :title='title' :text='text'></XtxConfirm>
+    const vNode = h(XtxConfirm, { title, text, confirmCallback, cancelCallback })
+    render(vNode, confirmDiv)
+  })
 }

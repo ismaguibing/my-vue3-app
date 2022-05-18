@@ -47,8 +47,13 @@
               </td>
               <td class="tc">
                 <p><a href="javascript:;">移入收藏夹</a></p>
-                <p><a class="green" href="javascript:;">删除</a></p>
+                <p><a class="green" href="javascript:;" @click="del(i.skuId)">删除</a></p>
                 <p><a href="javascript:;">找相似</a></p>
+              </td>
+            </tr>
+            <tr v-if="$store.getters['cart/validList'].length===0">
+              <td colspan="6">
+                <CartNone />
               </td>
             </tr>
           </tbody>
@@ -80,7 +85,7 @@
                 <p>&yen;{{i.nowPrice*i.count}}</p>
               </td>
               <td class="tc">
-                <p><a class="green" href="javascript:;">删除</a></p>
+                <p><a class="green" href="javascript:;" @click="del(i.skuId)">删除</a></p>
                 <p><a href="javascript:;">找相似</a></p>
               </td>
             </tr>
@@ -90,7 +95,7 @@
       <!-- 操作栏 -->
       <div class="action">
         <div class="batch">
-          <XtxCheckbox>全选</XtxCheckbox>
+          <XtxCheckbox :modelValue="isCheckAll" @change="changeAll">全选</XtxCheckbox>
           <a href="javascript:;">删除商品</a>
           <a href="javascript:;">移入收藏夹</a>
           <a href="javascript:;">清空失效商品</a>
@@ -108,13 +113,16 @@
 </template>
 <script>
 import GoodRelevant from '@/views/goods/components/goods-relevant'
+import CartNone from '@/views/cart/components/cart-none.vue'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
+import { confirm } from '@/components'
 export default {
   name: 'XtxCartPage',
 
   components: {
-    GoodRelevant
+    GoodRelevant,
+    CartNone
   },
 
   setup () {
@@ -137,6 +145,15 @@ export default {
       store.dispatch('cart/changeAll', { selected: event })
     }
 
+    const del = async skuId => {
+      try {
+        await confirm({ title: '温馨提示', text: '您确定从购物车删除该商品吗?' })
+        store.dispatch('cart/deleteCart', skuId)
+      } catch {
+        console.log('点击了取消')
+      }
+    }
+
     return {
       invalidList,
       selectedList,
@@ -145,7 +162,8 @@ export default {
       validTotal,
       isCheckAll,
       changeChecked,
-      changeAll
+      changeAll,
+      del
     }
   }
 }
