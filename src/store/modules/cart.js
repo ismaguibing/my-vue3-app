@@ -125,11 +125,42 @@ export default {
 
     // changeAll
     changeAll (context, payload) {
-      if (context.rootState.user.proFile.token) {
+      return new Promise((resolve, reject) => {
+        if (context.rootState.user.proFile.token) {
 
-      } else {
-        context.commit('changAll', payload.selected)
-      }
+        } else {
+          context.commit('changAll', payload.selected)
+          resolve()
+        }
+      })
+    },
+
+    // 更新sku
+    updateCartSku (context, { oldSkuId, newSku }) {
+      return new Promise((resolve, reject) => {
+        if (context.rootState.user.proFile.token) {
+
+        } else {
+          // context.commit('changAll', payload.selected)
+          const oldGoods = context.state.list.find(item => item.skuId === oldSkuId)
+          // 2. 删除旧的商品
+          context.commit('deleteCart', oldSkuId)
+          // 3. 合并一条新的商品信息
+          const newGoods = {
+            ...oldGoods,
+            skuId: newSku.id,
+            nowPrice: newSku.price,
+            stock: newSku.inventory,
+            attrsText: newSku.specs.reduce(
+              (p, v) => `${p} ${v.name}: ${v.valueName}`,
+              ''
+            )
+          }
+          // 4. 去插入即可
+          context.commit('cartAdd', newGoods)
+          resolve()
+        }
+      })
     }
 
   },

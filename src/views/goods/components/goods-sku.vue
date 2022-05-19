@@ -60,13 +60,18 @@ export default {
     }
     const pathMap = getPathMap(props.goods.skus)
 
-    // 如果有skuId 就需要设置默认选中
+    // 父组件传递了skuId,需要设置规格的默认选中
     if (props.skuId) {
-      const sku = props.goods.skus.forEach(v => v.id === props.skuId)
-
-      props.goods.specs.forEach((v, i) => {
-        const name = sku.specs[i].valueName
-        v.values.find(a => a.name === name).selected = true
+      const sku = props.goods.skus.find(item => item.id === props.skuId)
+      console.log(sku, 'sku')
+      // console.log(sku)
+      props.goods.specs.forEach((item, index) => {
+        const name = sku.specs[index].valueName
+        // 先让所有的选中都变成不选中
+        item.values.forEach(val => {
+          val.selected = false
+        })
+        item.values.find(val => val.name === name).selected = true
       })
     }
 

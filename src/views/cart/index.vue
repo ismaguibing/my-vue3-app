@@ -31,7 +31,8 @@
                   <div>
                     <p class="name ellipsis">{{i.name}}</p>
                     <!-- 选择规格组件 -->
-                    <p class="attr">{{i.attrsText}}</p>
+                    <!-- <p class="attr">{{i.attrsText}}</p> -->
+                    <cartSku :attrsText='i.attrsText' :skuId='i.skuId' @change="updateCartSku(i.skuId, $event)"></cartSku>
                   </div>
                 </div>
               </td>
@@ -113,6 +114,7 @@
 </template>
 <script>
 import GoodRelevant from '@/views/goods/components/goods-relevant'
+import cartSku from './components/cart-sku.vue'
 import CartNone from '@/views/cart/components/cart-none.vue'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
@@ -122,7 +124,8 @@ export default {
 
   components: {
     GoodRelevant,
-    CartNone
+    CartNone,
+    cartSku
   },
 
   setup () {
@@ -172,6 +175,10 @@ export default {
       store.dispatch('cart/batchDelete', isClear)
     }
 
+    const updateCartSku = (oldSkuId, newSku) => {
+      store.dispatch('cart/updateCartSku', { oldSkuId, newSku })
+    }
+
     return {
       invalidList,
       selectedList,
@@ -183,7 +190,8 @@ export default {
       changeCount,
       changeAll,
       del,
-      batchDelete
+      batchDelete,
+      updateCartSku
     }
   }
 }

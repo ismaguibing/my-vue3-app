@@ -11,3 +11,15 @@ export const getNewCartGoods = skuId => {
     url: `/goods/stock/${skuId}`
   })
 }
+
+/**
+ * 获取商品的specs和skus
+ * @param {String} skuId - 商品SKUID
+ * @returns Promise
+ */
+export const getSpecsAndSkus = skuId => {
+  return _axios({
+    method: 'get',
+    url: `/goods/sku/${skuId}`
+  })
+}
