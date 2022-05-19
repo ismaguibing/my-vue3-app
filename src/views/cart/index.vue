@@ -40,7 +40,7 @@
                 <p v-if="i.price-i.nowPrice>0">比加入时降价 <span class="red">&yen;{{i.price-i.nowPrice}}</span></p>
               </td>
               <td class="tc">
-                <XtxNumbox :modelValue='i.count' />
+                <XtxNumbox :modelValue='i.count' @change='changeCount(i.skuId,$event)' />
               </td>
               <td class="tc">
                 <p class="f16 red">&yen;{{i.price*i.count}}</p>
@@ -141,6 +141,14 @@ export default {
       })
     }
 
+    const changeCount = (v, event) => {
+      store.dispatch('cart/updateChange', {
+        skuId: v,
+        count: event
+      })
+      console.log(v, event)
+    }
+
     const changeAll = (event) => {
       store.dispatch('cart/changeAll', { selected: event })
     }
@@ -172,6 +180,7 @@ export default {
       validTotal,
       isCheckAll,
       changeChecked,
+      changeCount,
       changeAll,
       del,
       batchDelete
