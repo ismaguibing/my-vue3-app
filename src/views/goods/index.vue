@@ -25,7 +25,7 @@
         <div class="spec">
           <GoodsName :goods="goods" />
           <!-- 商品规格 -->
-          <GoodsSku :goods="goods" v-if="goods?.id" @changeSku='changeSku'></GoodsSku>
+          <GoodsSku :goods="goods" v-if="goods?.id" @changeSku='changeSku' :key="goods?.id"></GoodsSku>
           <!-- 商品数量 -->
           <XtxNumbox v-model="num" label='数量'></XtxNumbox>
           <!-- 加入购物车 -->

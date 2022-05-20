@@ -1,4 +1,4 @@
-import { getNewCartGoods, mergeLocalCart, findCartList } from '@/api/cart.js'
+import { getNewCartGoods, mergeLocalCart, findCartList, insertCart, deleteCart, updateCart, checkAllCart } from '@/api/cart.js'
 // 购物车状态
 export default {
   namespaced: true,
@@ -57,7 +57,10 @@ export default {
       return new Promise((resolve, reject) => {
         if (context.rootState.user.proFile.token) {
           // todo  成功调 resolve  失败调 reject
-
+          insertCart(payload).then(res => {
+            context.dispatch('updateCart')
+            resolve()
+          })
         } else {
           context.commit('cartAdd', payload)
           resolve()
@@ -95,6 +98,10 @@ export default {
       return new Promise((resolve, reject) => {
         if (context.rootState.user.proFile.token) {
           // todo
+          updateCart(payload).then(() => {
+            context.dispatch('updateCart')
+          })
+          resolve()
         } else {
           context.commit('updateCart', payload)
           resolve()
@@ -107,6 +114,10 @@ export default {
       return new Promise((resolve, reject) => {
         if (ctx.rootState.user.proFile.token) {
           // 登录 TODO
+          deleteCart([skuId]).then(() => {
+            ctx.dispatch('updateCart')
+            resolve()
+          })
         } else {
           // 本地
           ctx.commit('deleteCart', skuId)
@@ -120,6 +131,13 @@ export default {
       return new Promise((resolve, reject) => {
         if (context.rootState.user.proFile.token) {
           // 登录 TODO
+          const ids = context.getters[isClear ? 'invalidList' : 'selectedList'].map(
+            item => item.skuId
+          )
+          deleteCart(ids).then(() => {
+            context.dispatch('updateCart')
+            resolve()
+          })
         } else {
           // 本地
           context.getters[isClear ? 'invalidList' : 'selectedList'].forEach(v => {
@@ -134,7 +152,10 @@ export default {
     changeAll (context, payload) {
       return new Promise((resolve, reject) => {
         if (context.rootState.user.proFile.token) {
-
+          const ids = context.getters.validList.map(item => item.skuId)
+          checkAllCart({ selected: payload.selected, ids }).then(() => {
+            context.dispatch('updateCart')
+          })
         } else {
           context.commit('changAll', payload.selected)
           resolve()
@@ -146,7 +167,13 @@ export default {
     updateCartSku (context, { oldSkuId, newSku }) {
       return new Promise((resolve, reject) => {
         if (context.rootState.user.proFile.token) {
-
+          // 删除旧的sku
+          const oldGoods = context.state.list.find(item => item.skuId === oldSkuId)
+          deleteCart([oldSkuId]).then(() => {
+            return insertCart({ skuId: newSku.id, count: oldGoods.count })
+          }).then(() => {
+            context.dispatch('updateCart')
+          })
         } else {
           // context.commit('changAll', payload.selected)
           const oldGoods = context.state.list.find(item => item.skuId === oldSkuId)
