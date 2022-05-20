@@ -166,8 +166,12 @@ export default {
           res = await userAccountLogin(form.account, form.password)
         }
         store.commit('user/setProFile', res.result)
-        Message({ type: 'success', text: '登录成功' })
-        router.push('/')
+        store.dispatch('cart/mergeLocalCart').then(() => {
+          Message({ text: '登录成功' })
+          router.push('/')
+        })
+        // Message({ type: 'success', text: '登录成功' })
+        // router.push('/')
       } catch (e) {
         Message({ type: 'error', text: e.response.data.message })
       }

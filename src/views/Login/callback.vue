@@ -58,7 +58,11 @@ export default {
           console.log(res)
           Message({ text: '登录成功' })
           store.commit('user/setProFile', res.result)
-          router.push('/')
+          store.dispatch('cart/mergeLocalCart').then(() => {
+            Message({ text: '登录成功' })
+            router.push('/')
+          })
+          //   router.push('/')
         } catch (e) {
           console.log(e)
           Message({ type: 'error', text: 'qq未绑定' })

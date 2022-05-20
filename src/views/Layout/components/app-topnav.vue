@@ -40,6 +40,8 @@ export default {
     // 退出登录
     const logout = () => {
       store.commit('user/logout')
+      // 清空购物车
+      store.commit('cart/setCartList', [])
       router.push('/login')
       Message({ tyep: 'success', text: '退出成功' })
     }

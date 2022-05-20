@@ -103,7 +103,11 @@ export default {
         code: form.code
       })
       store.commit('user/setProFile', res.result)
-      router.push('/')
+      store.dispatch('cart/mergeLocalCart').then(() => {
+        Message({ text: '登录成功' })
+        router.push('/')
+      })
+      //   router.push('/')
       Message({ type: 'success', text: '绑定成功' })
     }
 

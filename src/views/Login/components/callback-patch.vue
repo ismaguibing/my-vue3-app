@@ -102,7 +102,11 @@ export default {
       if (valid) {
         const res = await userQQPatchLogin({ unionId: props.unionId, ...form })
         store.commit('user/setProFile', res.result)
-        router.push('/')
+        store.dispatch('cart/mergeLocalCart').then(() => {
+          Message({ text: '登录成功' })
+          router.push('/')
+        })
+        // router.push('/')
         Message({ type: 'success', text: 'QQ完善信息成功' })
       }
     }

@@ -1,4 +1,5 @@
-import { getNewCartGoods } from '@/api/cart.js'
+import { getNewCartGoods, mergeLocalCart, findCartList } from '@/api/cart.js'
+// 购物车状态
 export default {
   namespaced: true,
 
@@ -41,6 +42,11 @@ export default {
       state.list.forEach(v => {
         v.selected = val
       })
+    },
+
+    // 设置购物车列表
+    setCartList (state, list) {
+      state.list = list
     }
   },
 
@@ -64,12 +70,13 @@ export default {
       return new Promise((resolve, reject) => {
         if (context.rootState.user.proFile.token) {
           // todo  成功调 resolve  失败调 reject
-
+          findCartList().then(res => {
+            context.commit('setCartList', res.result)
+          })
         } else {
           const reqArr = context.state.list.map(v => {
             return getNewCartGoods(v.skuId)
           })
-
           Promise.all(reqArr).then(res => {
             res.forEach((v, i) => {
               context.commit('updateCart', {
@@ -161,6 +168,17 @@ export default {
           resolve()
         }
       })
+    },
+
+    // 合并本地购物车
+    async mergeLocalCart (ctx) {
+    // 存储token后调用合并API接口函数进行购物合并
+      const cartList = ctx.getters.validList.map(({ skuId, selected, count }) => {
+        return { skuId, selected, count }
+      })
+      await mergeLocalCart(cartList)
+      // 合并成功将本地购物车删除
+      ctx.commit('setCartList', [])
     }
 
   },
