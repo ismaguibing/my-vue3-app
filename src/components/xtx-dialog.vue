@@ -1,22 +1,22 @@
 <template>
-  <div class="xtx-dialog" :class="{fade}">
-    <div class="wrapper" :class="{fade}">
+  <div class="xtx-dialog" v-show="visible" :class="{fade}">
+    <div class="wrapper" :class="{fade}" ref="target">
       <div class="header">
         <h3>{{title}}</h3>
-        <a href="JavaScript:;" class="iconfont icon-close-new"></a>
+        <a href="JavaScript:;" class="iconfont icon-close-new" @click="close"></a>
       </div>
       <div class="body">
         <slot></slot>
       </div>
       <div class="footer">
-
         <slot name="footer" />
       </div>
     </div>
   </div>
 </template>
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
+import { onClickOutside } from '@vueuse/core'
 export default {
   name: 'XtxDialog',
 
@@ -24,18 +24,32 @@ export default {
     title: {
       type: String,
       default: '温馨提示'
+    },
+
+    visible: {
+      type: Boolean,
+      default: false
     }
   },
 
-  setup () {
+  setup (props, { emit }) {
     const fade = ref(false)
-    onMounted(() => {
-      // 结构和样式同时加上无过度效果，需要些延时。
+    watch(() => props.visible, (v) => {
       setTimeout(() => {
-        fade.value = true
-      }, 0)
+        fade.value = v
+      }, 500)
     })
-    return { fade }
+
+    const close = () => {
+      emit('update:visible', false)
+    }
+
+    const target = ref(null)
+    onClickOutside(target, () => {
+      emit('update:visible', false)
+    })
+
+    return { fade, close, target }
   }
 }
 </script>

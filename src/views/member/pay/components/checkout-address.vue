@@ -10,16 +10,16 @@
       <a href="javascript:;">修改地址</a>
     </div>
     <div class="action">
-      <XtxButton class="btn">切换地址</XtxButton>
+      <XtxButton class="btn" @click="visible = true">切换地址</XtxButton>
       <XtxButton class="btn">添加地址</XtxButton>
     </div>
   </div>
 
-  <XtxDialog title="切换收货地址">
+  <XtxDialog title="切换收货地址" v-model:visible="visible">
     对话框内容
     <template #footer>
-      <XtxButton type="gray" style="margin-right:20px">取消</XtxButton>
-      <XtxButton type="primary">确认</XtxButton>
+      <XtxButton @click="visible = false" type="gray" style="margin-right:20px">取消</XtxButton>
+      <XtxButton @click="visible = false" type="primary">确认</XtxButton>
     </template>
   </XtxDialog>
 
@@ -39,6 +39,7 @@ export default {
   setup (props) {
     // 显示的地址
     const showAddress = ref(null)
+    const visible = ref(false)
 
     watch(() => props.userAddresses, () => {
       if (props.userAddresses.length) {
@@ -52,7 +53,7 @@ export default {
       }
     }, { immediate: true, deep: true })
 
-    return { showAddress }
+    return { showAddress, visible }
   }
 }
 </script>
