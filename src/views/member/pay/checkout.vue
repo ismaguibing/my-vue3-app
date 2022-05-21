@@ -24,7 +24,7 @@
               <XtxButton class="btn">添加地址</XtxButton>
             </div>
           </div> -->
-          <CheckoutAddress :userAddresses='info.userAddresses' v-if="info.userAddresses"></CheckoutAddress>
+          <CheckoutAddress :userAddresses='info.userAddresses' v-if="info.userAddresses" @changeAddress='changeAddress'></CheckoutAddress>
         </div>
         <!-- 商品信息 -->
         <h3 class="box-title">商品信息</h3>
@@ -119,8 +119,14 @@ export default {
       info.value = res.result
     })
 
+    // 接收地址Id
+    const changeAddress = (v) => {
+      console.log(v)
+    }
+
     return {
-      info
+      info,
+      changeAddress
     }
   }
 }
@@ -142,59 +148,7 @@ export default {
     }
   }
 }
-.address {
-  border: 1px solid #f5f5f5;
-  display: flex;
-  align-items: center;
-  .text {
-    flex: 1;
-    min-height: 90px;
-    display: flex;
-    align-items: center;
-    .none {
-      line-height: 90px;
-      color: #999;
-      text-align: center;
-      width: 100%;
-    }
-    > ul {
-      flex: 1;
-      padding: 20px;
-      li {
-        line-height: 30px;
-        span {
-          color: #999;
-          margin-right: 5px;
-          > i {
-            width: 0.5em;
-            display: inline-block;
-          }
-        }
-      }
-    }
-    > a {
-      color: @xtxColor;
-      width: 160px;
-      text-align: center;
-      height: 90px;
-      line-height: 90px;
-      border-right: 1px solid #f5f5f5;
-    }
-  }
-  .action {
-    width: 420px;
-    text-align: center;
-    .btn {
-      width: 140px;
-      height: 46px;
-      line-height: 44px;
-      font-size: 14px;
-      &:first-child {
-        margin-right: 10px;
-      }
-    }
-  }
-}
+
 .goods {
   width: 100%;
   border-collapse: collapse;
