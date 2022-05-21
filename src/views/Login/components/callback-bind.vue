@@ -93,6 +93,7 @@ export default {
 
     const store = useStore()
     const router = useRouter()
+    const route = useRoute()
 
     const bind = async () => {
       const valid = target.value.validate()
@@ -105,9 +106,10 @@ export default {
       store.commit('user/setProFile', res.result)
       store.dispatch('cart/mergeLocalCart').then(() => {
         Message({ text: '登录成功' })
-        router.push('/')
+        const redirectUrl = localStorage.getItem('redirectUrl') || '/'
+        localStorage.removeItem('redirectUrl')
+        router.push(redirectUrl)
       })
-      //   router.push('/')
       Message({ type: 'success', text: '绑定成功' })
     }
 

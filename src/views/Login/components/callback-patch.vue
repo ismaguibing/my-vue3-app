@@ -49,7 +49,7 @@ import { account, password, code, mobile, rePassword } from '@/utils/validate'
 import { userQQPatchCode, userQQPatchLogin } from '@/api/user'
 import { useCounter } from '@/hooks'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import Message from '@/components/index.js'
 export default {
   name: 'CallbackPatch',
@@ -94,6 +94,7 @@ export default {
 
     const store = useStore()
     const router = useRouter()
+    const route = useRoute()
     const { time, start } = useCounter()
 
     // 绑定 完善信息
@@ -104,7 +105,9 @@ export default {
         store.commit('user/setProFile', res.result)
         store.dispatch('cart/mergeLocalCart').then(() => {
           Message({ text: '登录成功' })
-          router.push('/')
+          const redirectUrl = localStorage.getItem('redirectUrl') || '/'
+          localStorage.removeItem('redirectUrl')
+          router.push(redirectUrl)
         })
         // router.push('/')
         Message({ type: 'success', text: 'QQ完善信息成功' })

@@ -104,7 +104,7 @@
         <div class="total">
           共 {{validTotal}}件商品，已选择 {{selectedTotal}} 件，商品合计：
           <span class="red">¥{{selectedAmount}}</span>
-          <XtxButton type="primary">下单结算</XtxButton>
+          <XtxButton type="primary" @click="goCheckout">下单结算</XtxButton>
         </div>
       </div>
       <!-- 猜你喜欢 -->
@@ -116,9 +116,10 @@
 import GoodRelevant from '@/views/goods/components/goods-relevant'
 import cartSku from './components/cart-sku.vue'
 import CartNone from '@/views/cart/components/cart-none.vue'
+import { Message, confirm } from '@/components'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
-import { confirm } from '@/components'
+import { useRouter } from 'vue-router'
 export default {
   name: 'XtxCartPage',
 
@@ -130,6 +131,7 @@ export default {
 
   setup () {
     const store = useStore()
+    const router = useRouter()
     const invalidList = computed(() => store.getters['cart/invalidList'])
     const validTotal = computed(() => store.getters['cart/validTotal'])
     const selectedList = computed(() => store.getters['cart/selectedList'])
@@ -179,6 +181,22 @@ export default {
       store.dispatch('cart/updateCartSku', { oldSkuId, newSku })
     }
 
+    // 去结算
+    const goCheckout = () => {
+      if (store.getters['cart/selectedList'].length === 0) return Message({ type: 'warning', text: '请至少选择一件商品' })
+
+      if (!store.state.user.proFile.token) {
+        return confirm({ text: '结算功能需要登录，您是否要跳转到登录?' })
+          .then(() => {
+            // 点了确定
+            router.push('/member/checkout')
+          })
+          .catch((e) => {
+          })
+      }
+      router.push('/member/checkout')
+    }
+
     return {
       invalidList,
       selectedList,
@@ -191,7 +209,8 @@ export default {
       changeAll,
       del,
       batchDelete,
-      updateCartSku
+      updateCartSku,
+      goCheckout
     }
   }
 }

@@ -27,7 +27,7 @@ import LoginFooter from './components/login-footer'
 import callbackBind from './components/callback-bind.vue'
 import callbakPatch from './components/callback-patch.vue'
 import { Message } from '@/components/index'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { ref } from 'vue'
 import { userQQLogin } from '@/api/user'
@@ -44,6 +44,7 @@ export default {
   setup () {
     const hasAccount = ref(true)
     const router = useRouter()
+    const route = useRoute()
     const store = useStore()
 
     const unionId = ref(null)
@@ -60,9 +61,10 @@ export default {
           store.commit('user/setProFile', res.result)
           store.dispatch('cart/mergeLocalCart').then(() => {
             Message({ text: '登录成功' })
-            router.push('/')
+            const redirectUrl = localStorage.getItem('redirectUrl') || '/'
+            localStorage.removeItem('redirectUrl')
+            router.push(redirectUrl)
           })
-          //   router.push('/')
         } catch (e) {
           console.log(e)
           Message({ type: 'error', text: 'qq未绑定' })

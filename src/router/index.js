@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-
 import Layout from '@/views/Layout'
+import store from '@/store'
 const routes = [
   {
     path: '/',
@@ -25,6 +25,10 @@ const routes = [
       {
         path: '/cart',
         component: () => import('@/views/cart')
+      },
+      {
+        path: '/member/checkout',
+        component: () => import('@/views/member/pay/checkout.vue')
       }
 
     ]
@@ -53,6 +57,28 @@ const router = createRouter({
     }
   },
   routes
+})
+
+// 配置路由导航守卫，拦截 /member开头的所有的地址
+router.beforeEach((to, from, next) => {
+  // 判断用户登没登录
+  const token = store.state.user.proFile.token
+  if (token) {
+    next()
+  } else {
+    if (to.path.includes('/member')) {
+      // 需要登录才能访问
+      localStorage.setItem('redirectUrl', to.fullPath)
+      next({
+        path: '/login',
+        query: {
+          redirectUrl: to.fullPath
+        }
+      })
+    } else {
+      next()
+    }
+  }
 })
 
 export default router

@@ -168,7 +168,9 @@ export default {
         store.commit('user/setProFile', res.result)
         store.dispatch('cart/mergeLocalCart').then(() => {
           Message({ text: '登录成功' })
-          router.push('/')
+          const redirectUrl = localStorage.getItem('redirectUrl') || '/'
+          localStorage.removeItem('redirectUrl')
+          router.push(redirectUrl)
         })
         // Message({ type: 'success', text: '登录成功' })
         // router.push('/')
