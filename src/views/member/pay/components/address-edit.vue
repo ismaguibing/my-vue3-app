@@ -17,7 +17,7 @@
         <div class="xtx-form-item">
           <div class="label">地区：</div>
           <div class="field">
-            <XtxCity placeholder="请选择所在地区" :fullLocation="formData.fullLocation" @change="changeCty" />
+            <XtxCity placeholder="请选择所在地区" :fullLocation="formData.fullLocation" @changeCity="changeCity" />
           </div>
         </div>
         <div class="xtx-form-item">
@@ -47,13 +47,14 @@
       </div>
     </div>
     <template v-slot:footer>
-      <XtxButton type="gray" style="margin-right:20px">取消</XtxButton>
-      <XtxButton type="primary">确认</XtxButton>
+      <XtxButton type="gray" style="margin-right:20px" @click="dialogVisible = false">取消</XtxButton>
+      <XtxButton type="primary" @click="confirm">确认</XtxButton>
     </template>
   </XtxDialog>
 </template>
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch, inject } from 'vue'
+import { addAddress } from '@/api/order'
 export default {
   name: 'AddressEdit',
   setup () {
@@ -72,15 +73,33 @@ export default {
     })
 
     // 选择地区
-    const changeCty = (data) => {
+    const changeCity = (data) => {
       console.log(data)
       formData.provinceCode = data.provinceCode
       formData.cityCode = data.cityCode
       formData.countyCode = data.countyCode
-      formData.fullLocation = data.fullLocation
+      formData.fullLocation = data.provinceName + '' + data.cityName + '' + data.countyName
+    }
+
+    const getAddressList = inject('getAddressList')
+
+    const confirm = () => {
+      addAddress(formData).then(res => {
+        // console.log(res)
+        getAddressList()
+        dialogVisible.value = false
+      })
     }
 
     const dialogVisible = ref(false)
+    watch(dialogVisible, (v) => {
+      if (v) {
+        for (const key in formData) {
+          formData[key] = ''
+        }
+        formData.isDefault = 0
+      }
+    })
     // 打开函数
     const open = () => {
       dialogVisible.value = true
@@ -89,7 +108,8 @@ export default {
       dialogVisible,
       formData,
       open,
-      changeCty
+      changeCity,
+      confirm
     }
   }
 }

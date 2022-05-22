@@ -104,7 +104,7 @@
 </template>
 <script>
 import { findCheckoutInfo } from '@/api/order'
-import { ref } from 'vue'
+import { provide, ref } from 'vue'
 import CheckoutAddress from './components/checkout-address.vue'
 export default {
   name: 'XtxPayCheckoutPage',
@@ -115,9 +115,16 @@ export default {
 
   setup () {
     const info = ref({})
-    findCheckoutInfo().then(res => {
-      info.value = res.result
-    })
+
+    const getAddressList = () => {
+      findCheckoutInfo().then(res => {
+        info.value = res.result
+      })
+    }
+
+    getAddressList()
+
+    provide('getAddressList', getAddressList)
 
     // 接收地址Id
     const changeAddress = (v) => {
