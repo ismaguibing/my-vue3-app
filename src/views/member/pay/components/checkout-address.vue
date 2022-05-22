@@ -11,7 +11,7 @@
     </div>
     <div class="action">
       <XtxButton class="btn" @click="visible = true">切换地址</XtxButton>
-      <XtxButton class="btn">添加地址</XtxButton>
+      <XtxButton class="btn" @click="openAddressEdit()">添加地址</XtxButton>
     </div>
     <XtxDialog title="切换收货地址" v-model:visible="visible">
       <div class="text item" :class="{active:selectedAddress?.id===item.id}" @click="selectedAddress=item" v-for="item in userAddresses" :key="item.id">
@@ -26,11 +26,13 @@
         <XtxButton @click="changeAddress" type="primary">确认</XtxButton>
       </template>
     </XtxDialog>
+    <AddressEdit ref="addressEdit"></AddressEdit>
   </div>
 
 </template>
 <script>
 import { ref, watch } from 'vue'
+import AddressEdit from './address-edit.vue'
 export default {
   name: 'CheckoutAddress',
   emits: ['changeAddress'],
@@ -39,6 +41,10 @@ export default {
       type: Array,
       default: () => []
     }
+  },
+
+  components: {
+    AddressEdit
   },
 
   setup (props, { emit }) {
@@ -55,6 +61,7 @@ export default {
         } else {
           showAddress.value = { ...props.userAddresses[0] }
         }
+        selectedAddress.value = showAddress.value
         emit('changeAddress', showAddress.value.id)
       }
     }, { immediate: true, deep: true })
@@ -65,7 +72,12 @@ export default {
       emit('changeAddress', selectedAddress.value.id)
     }
 
-    return { showAddress, visible, selectedAddress, changeAddress }
+    const addressEdit = ref(null)
+    const openAddressEdit = () => {
+      addressEdit.value.open()
+    }
+
+    return { showAddress, visible, selectedAddress, changeAddress, addressEdit, openAddressEdit }
   }
 }
 </script>
