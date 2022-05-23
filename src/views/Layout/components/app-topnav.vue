@@ -4,7 +4,7 @@
       <ul>
         <template v-if='proFile.id'>
           <li>
-            <a href="javascript:;"><i class="iconfont icon-user"></i>{{proFile.account}}</a>
+            <RouterLink to="/member"><i class="iconfont icon-user"></i>{{proFile.account}}</RouterLink>
           </li>
           <li><a href="javascript:;" @click="logout">退出登录</a></li>
         </template>
@@ -15,7 +15,9 @@
           <li><a href="javascript:;">免费注册</a></li>
         </template>
         <li><a href="javascript:;">我的订单</a></li>
-        <li><a href="javascript:;">会员中心</a></li>
+        <li>
+          <RouterLink to="/member">会员中心</RouterLink>
+        </li>
         <li><a href="javascript:;">帮助中心</a></li>
         <li><a href="javascript:;">关于我们</a></li>
         <li>

@@ -38,6 +38,22 @@ const routes = [
       {
         path: '/pay/callback',
         component: () => import('@/views/member/pay/callback.vue')
+      },
+      {
+        path: '/member',
+        component: () => import('@/views/member/layout'),
+        children: [
+          {
+            // 个人中心
+            path: '/member',
+            component: () => import('@/views/member/home')
+          },
+          {
+            // 订单
+            path: '/member/order',
+            component: () => import('@/views/member/order')
+          }
+        ]
       }
 
     ]
@@ -65,6 +81,7 @@ const router = createRouter({
       left: 0
     }
   },
+  linkExactActiveClass: 'active',
   routes
 })
 
