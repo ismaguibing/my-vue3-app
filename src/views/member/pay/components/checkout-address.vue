@@ -7,7 +7,7 @@
         <li><span>联系方式：</span>{{showAddress.contact}}</li>
         <li><span>收货地址：</span>{{showAddress.fullLocation.replace(/ /g,'')+showAddress.address}}</li>
       </ul>
-      <a href="javascript:;">修改地址</a>
+      <a href="javascript:;" @click="openAddressEdit(showAddress)" v-if="showAddress">修改地址</a>
     </div>
     <div class="action">
       <XtxButton class="btn" @click="visible = true">切换地址</XtxButton>
@@ -31,7 +31,7 @@
 
 </template>
 <script>
-import { ref, watch } from 'vue'
+import { provide, ref, watch } from 'vue'
 import AddressEdit from './address-edit.vue'
 export default {
   name: 'CheckoutAddress',
@@ -72,9 +72,16 @@ export default {
       emit('changeAddress', selectedAddress.value.id)
     }
 
+    const updateAddress = (address) => {
+      showAddress.value = address
+      selectedAddress.value = address
+    }
+
+    provide('updateAddress', updateAddress)
+
     const addressEdit = ref(null)
-    const openAddressEdit = () => {
-      addressEdit.value.open()
+    const openAddressEdit = (showAddress) => {
+      addressEdit.value.open(showAddress)
     }
 
     return { showAddress, visible, selectedAddress, changeAddress, addressEdit, openAddressEdit }

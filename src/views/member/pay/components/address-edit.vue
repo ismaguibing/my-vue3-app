@@ -1,5 +1,5 @@
 <template>
-  <XtxDialog title="添加收货地址" v-model:visible="dialogVisible">
+  <XtxDialog :title="formData.id?'修改收货地址':'添加收货地址'" v-model:visible="dialogVisible">
     <div class="address-edit">
       <div class="xtx-form">
         <div class="xtx-form-item">
@@ -54,12 +54,13 @@
 </template>
 <script>
 import { ref, reactive, watch, inject } from 'vue'
-import { addAddress } from '@/api/order'
+import { addAddress, editAddress } from '@/api/order'
 export default {
   name: 'AddressEdit',
   setup () {
     // 表单数据
     const formData = reactive({
+      id: '',
       receiver: '',
       contact: '',
       provinceCode: '',
@@ -82,26 +83,43 @@ export default {
     }
 
     const getAddressList = inject('getAddressList')
-
-    const confirm = () => {
-      addAddress(formData).then(res => {
-        // console.log(res)
+    const updateAddress = inject('updateAddress')
+    const confirm = async () => {
+      if (formData.id) {
+        // 修改
+        await editAddress(formData)
+        updateAddress({ ...formData })
+      } else {
+        // 添加
+        await addAddress(formData)
         getAddressList()
-        dialogVisible.value = false
-      })
+      }
+      dialogVisible.value = false
     }
 
     const dialogVisible = ref(false)
     watch(dialogVisible, (v) => {
-      if (v) {
+      if (!v) {
         for (const key in formData) {
           formData[key] = ''
         }
         formData.isDefault = 0
       }
     })
+
     // 打开函数
-    const open = () => {
+    const open = (showAddress) => {
+      if (showAddress.id) {
+        for (const key in showAddress) {
+          formData[key] = showAddress[key]
+        }
+      } else {
+        for (const key in formData) {
+          if (key !== 'isDefault') {
+            formData[key] = ''
+          }
+        }
+      }
       dialogVisible.value = true
     }
     return {
