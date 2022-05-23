@@ -109,7 +109,7 @@ export default {
 
     // 打开函数
     const open = (showAddress) => {
-      if (showAddress.id) {
+      if (showAddress && showAddress.id) {
         for (const key in showAddress) {
           formData[key] = showAddress[key]
         }

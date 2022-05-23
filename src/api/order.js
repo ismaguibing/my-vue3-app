@@ -45,3 +45,14 @@ export const createOrder = order => {
     data: order
   })
 }
+
+/**
+ * 获取订单详情
+ * @param {String} id - 订单ID
+ */
+export const findOrder = id => {
+  return _axios({
+    method: 'get',
+    url: '/member/order/' + id
+  })
+}

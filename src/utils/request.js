@@ -1,7 +1,10 @@
 import axios from 'axios'
 import store from '@/store'
+
+export const baseURL = 'https://apipc-xiaotuxian-front.itheima.net/'
+
 const instance = axios.create({
-  baseURL: 'https://apipc-xiaotuxian-front.itheima.net',
+  baseURL,
   timeout: 2000
   // headers: { 'X-Custom-Header': 'foobar' }
 })
