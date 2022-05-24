@@ -1,9 +1,11 @@
 <template>
-  <XtxTabs v-model="activeName">
+  <XtxTabs v-model="activeName" @tab-click='tabclickFn'>
     <XtxTabsPanel v-for="v in orderStatus" :key="v.name" :label='v.label' :name='v.name'></XtxTabsPanel>
   </XtxTabs>
 
   <div class="order-list">
+    <div v-if="loading" class="loading"></div>
+    <div class="none" v-if="!loading && orderList.length === 0">暂无数据</div>
     <OrderItem v-for="v in orderList" :key="v" :order='v'></OrderItem>
   </div>
 
@@ -12,7 +14,7 @@
 </template>
 
 <script>
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { orderStatus } from '@/api/constants'
 import { findOrderList } from '@/api/order.js'
 import OrderItem from './components/order-item.vue'
@@ -23,6 +25,7 @@ export default {
 
   setup () {
     const activeName = ref('all')
+    const loading = ref(false)
     const reqParams = reactive({
       orderState: 0,
       page: 1,
@@ -30,133 +33,54 @@ export default {
     })
 
     const orderList = ref(null)
-    findOrderList(reqParams).then(res => {
-      orderList.value = res.result.items
-    })
+
+    watch(reqParams, () => {
+      loading.value = true
+      findOrderList(reqParams).then(res => {
+        orderList.value = res.result.items
+        loading.value = false
+      })
+    }, { immediate: true })
+
+    const tabclickFn = ({ v, i }) => {
+      reqParams.orderState = i
+    }
 
     return {
       activeName,
       orderStatus,
-      orderList
+      orderList,
+      loading,
+      tabclickFn
     }
   }
 }
 
 </script>
 <style scoped lang='less'>
+// .order-list {
+//   background: #fff;
+//   padding: 20px;
+// }
 .order-list {
-  background: #fff;
   padding: 20px;
+  background: #fff;
+  position: relative;
+  min-height: 400px;
 }
-.order-item {
-  margin-bottom: 20px;
-  border: 1px solid #f5f5f5;
-  .head {
-    height: 50px;
-    line-height: 50px;
-    background: #f5f5f5;
-    padding: 0 20px;
-    overflow: hidden;
-    span {
-      margin-right: 20px;
-      &.down-time {
-        margin-right: 0;
-        float: right;
-        i {
-          vertical-align: middle;
-          margin-right: 3px;
-        }
-        b {
-          vertical-align: middle;
-          font-weight: normal;
-        }
-      }
-    }
-    .del {
-      margin-right: 0;
-      float: right;
-      color: #999;
-    }
-  }
-  .body {
-    display: flex;
-    align-items: stretch;
-    .column {
-      border-left: 1px solid #f5f5f5;
-      text-align: center;
-      padding: 20px;
-      > p {
-        padding-top: 10px;
-      }
-      &:first-child {
-        border-left: none;
-      }
-      &.goods {
-        flex: 1;
-        padding: 0;
-        align-self: center;
-        ul {
-          li {
-            border-bottom: 1px solid #f5f5f5;
-            padding: 10px;
-            display: flex;
-            &:last-child {
-              border-bottom: none;
-            }
-            .image {
-              width: 70px;
-              height: 70px;
-              border: 1px solid #f5f5f5;
-            }
-            .info {
-              width: 220px;
-              text-align: left;
-              padding: 0 10px;
-              p {
-                margin-bottom: 5px;
-                &.name {
-                  height: 38px;
-                }
-                &.attr {
-                  color: #999;
-                  font-size: 12px;
-                  span {
-                    margin-right: 5px;
-                  }
-                }
-              }
-            }
-            .price {
-              width: 100px;
-            }
-            .count {
-              width: 80px;
-            }
-          }
-        }
-      }
-      &.state {
-        width: 120px;
-        .green {
-          color: @xtxColor;
-        }
-      }
-      &.amount {
-        width: 200px;
-        .red {
-          color: @priceColor;
-        }
-      }
-      &.action {
-        width: 140px;
-        a {
-          display: block;
-          &:hover {
-            color: @xtxColor;
-          }
-        }
-      }
-    }
-  }
+.loading {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: rgba(255, 255, 255, 0.9) url(../../../assets/images/loading.gif)
+    no-repeat center;
+}
+.none {
+  height: 400px;
+  text-align: center;
+  line-height: 400px;
+  color: #999;
 }
 </style>

@@ -16,9 +16,11 @@ export default {
     const activeName = useVModel(props, 'modelValue', emit)
     provide('activeName', activeName)
 
-    const clickFn = (name) => {
-      activeName.value = name
+    const clickFn = (v, i) => {
+      activeName.value = v.props.name
+      emit('tab-click', { v, i })
     }
+
     return {
       activeName,
       clickFn
@@ -27,7 +29,6 @@ export default {
 
   render () {
     const slots = this.$slots.default()
-    console.log(slots)
     const panels = []
     slots.forEach(v => {
       if (v.type.name === 'XtxTabsPanel') {
@@ -38,8 +39,8 @@ export default {
     })
 
     const nav = <nav>
-      {panels.map(v => {
-        return <a class={{ active: this.activeName === v.props.name }} href='javascript:;' onClick={() => this.clickFn(v.props.name)}>{v.props.label}</a>
+      {panels.map((v, i) => {
+        return <a class={{ active: this.activeName === v.props.name }} href='javascript:;' onClick={() => this.clickFn(v, i)}>{v.props.label}</a>
       })}
     </nav>
 

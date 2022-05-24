@@ -65,5 +65,5 @@ export const findOrder = id => {
  * @returns
  */
 export const findOrderList = ({ orderState = 0, page = 1, pageSize = 10 }) => {
-  return _axios({ url: '/member/order', method: 'get', data: { orderState, page, pageSize } })
+  return _axios({ url: '/member/order', method: 'get', params: { orderState, page, pageSize } })
 }
