@@ -1,21 +1,19 @@
 <template>
-  <div>订单中心</div>
+  <XtxTabs v-model="activeName">
+    <XtxTabsPanel v-for="v in orderStatus" :key="v.name" :label='v.label' :name='v.name'>1</XtxTabsPanel>
+  </XtxTabs>
 </template>
 
 <script>
-import { reactive, toRefs, onBeforeMount, onMounted } from 'vue'
+import { ref } from 'vue'
+import { orderStatus } from '@/api/constants'
 export default {
-  name: '',
   setup () {
-    const data = reactive({})
-    onBeforeMount(() => {
-      console.log('2.组件挂载页面之前执行----onBeforeMount')
-    })
-    onMounted(() => {
-      console.log('3.-组件挂载到页面之后执行-------onMounted')
-    })
+    const activeName = ref('all')
+
     return {
-      ...toRefs(data)
+      activeName,
+      orderStatus
     }
   }
 }
