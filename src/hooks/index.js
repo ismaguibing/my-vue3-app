@@ -2,6 +2,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 import { useIntersectionObserver, useIntervalFn } from '@vueuse/core'
 
+import dayjs from 'dayjs'
 // 获取x,y滚动的距离
 export const userScroll = () => {
   const x = ref(0)
@@ -74,4 +75,32 @@ export const useCounter = (num = 60) => {
   })
 
   return { time, start }
+}
+
+export const formatPayTime = () => {
+  const time = ref(0)
+  const showTime = ref('')
+  const { resume, pause } = useIntervalFn(() => {
+    time.value--
+    showTime.value = dayjs.unix(time.value).format('mm分ss秒')
+    if (time.value < 0) {
+      pause()
+    }
+  }, 1000, { immediate: true })
+
+  onBeforeUnmount(() => {
+    pause()
+  })
+
+  const start = (num = 0) => {
+    time.value = num
+    showTime.value = dayjs.unix(time.value).format('mm分ss秒')
+    resume()
+  }
+
+  return {
+    start,
+    time,
+    showTime
+  }
 }

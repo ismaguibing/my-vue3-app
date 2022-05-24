@@ -56,3 +56,14 @@ export const findOrder = id => {
     url: '/member/order/' + id
   })
 }
+
+/**
+ * 查询订单列表
+ * @param {Number} orderState - 订单状态，1为待付款、2为待发货、3为待收货、4为待评价、5为已完成、6为已取消，未传该参数或0为全部
+ * @param {Number} page - 页码
+ * @param {Number} pageSize - 每页条数
+ * @returns
+ */
+export const findOrderList = ({ orderState = 0, page = 1, pageSize = 10 }) => {
+  return _axios({ url: '/member/order', method: 'get', data: { orderState, page, pageSize } })
+}
