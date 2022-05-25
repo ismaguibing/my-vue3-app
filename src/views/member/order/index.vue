@@ -10,7 +10,7 @@
   </div>
 
   <!-- 分页 -->
-  <XtxPagination></XtxPagination>
+  <XtxPagination :current='reqParams.page' :size='reqParams.pageSize' :total='total' @current-change="currentchange"></XtxPagination>
 </template>
 
 <script>
@@ -26,10 +26,11 @@ export default {
   setup () {
     const activeName = ref('all')
     const loading = ref(false)
+    const total = ref(0)
     const reqParams = reactive({
       orderState: 0,
       page: 1,
-      pageSize: 10
+      pageSize: 5
     })
 
     const orderList = ref(null)
@@ -38,20 +39,29 @@ export default {
       loading.value = true
       findOrderList(reqParams).then(res => {
         orderList.value = res.result.items
+        total.value = res.result.counts
         loading.value = false
       })
     }, { immediate: true })
 
     const tabclickFn = ({ v, i }) => {
       reqParams.orderState = i
+      reqParams.page = 1
+    }
+
+    const currentchange = (v) => {
+      reqParams.page = v
     }
 
     return {
       activeName,
       orderStatus,
       orderList,
+      reqParams,
+      total,
       loading,
-      tabclickFn
+      tabclickFn,
+      currentchange
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="xtx-pagination">
+  <div class="xtx-pagination" v-if="total>0">
     <a href="javascript:;" @click="currentPage--" v-if="currentPage!==1">上一页</a>
     <a href="javascript:;" class="disabled" v-else>上一页</a>
     <span v-if="params.start>1">...</span>
