@@ -6,7 +6,7 @@
   <div class="order-list">
     <div v-if="loading" class="loading"></div>
     <div class="none" v-if="!loading && orderList.length === 0">暂无数据</div>
-    <OrderItem v-for="v in orderList" :key="v" :order='v' @cancelOrder='cancelOrder'></OrderItem>
+    <OrderItem v-for="v in orderList" :key="v" :order='v' @cancelOrder='cancelOrder' @deleteOrder='deleteOrder' @confirmOrder='confirmOrderA'></OrderItem>
   </div>
 
   <!-- 分页 -->
@@ -19,7 +19,8 @@
 <script>
 import { reactive, ref, watch } from 'vue'
 import { orderStatus } from '@/api/constants'
-import { findOrderList } from '@/api/order.js'
+import { delteOrder, findOrderList, confirmOrder } from '@/api/order.js'
+import { Message } from '@/components'
 import OrderItem from './components/order-item.vue'
 import OrderCancel from './components/order-cancel.vue'
 export default {
@@ -40,13 +41,17 @@ export default {
 
     const orderList = ref(null)
 
-    watch(reqParams, () => {
+    const getOrderList = () => {
       loading.value = true
       findOrderList(reqParams).then(res => {
         orderList.value = res.result.items
         total.value = res.result.counts
         loading.value = false
       })
+    }
+
+    watch(reqParams, () => {
+      getOrderList()
     }, { immediate: true })
 
     const tabclickFn = ({ v, i }) => {
@@ -59,8 +64,24 @@ export default {
     }
 
     const target = ref(null)
+
+    // 取消订单
     const cancelOrder = (v) => {
       target.value.open({ id: v })
+    }
+
+    // 删除订单
+    const deleteOrder = async (v) => {
+      await delteOrder([v.id])
+      getOrderList()
+      Message({ text: '删除成功', type: 'success' })
+    }
+
+    // 确认收货
+    const confirmOrderA = async (v) => {
+      await confirmOrder(v.id)
+      getOrderList()
+      Message({ text: '确认收货成功', type: 'success' })
     }
 
     return {
@@ -73,17 +94,15 @@ export default {
       tabclickFn,
       currentchange,
       cancelOrder,
-      target
+      deleteOrder,
+      target,
+      confirmOrderA
     }
   }
 }
 
 </script>
 <style scoped lang='less'>
-// .order-list {
-//   background: #fff;
-//   padding: 20px;
-// }
 .order-list {
   padding: 20px;
   background: #fff;

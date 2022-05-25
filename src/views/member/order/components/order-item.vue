@@ -50,9 +50,12 @@
         <!-- 已完成：查看详情，再次购买，申请售后 -->
         <!-- 已取消：查看详情 -->
         <XtxButton v-if="order.orderState===1" type="primary" size="small" @click="$router.push(`/member/pay?id=${order.id}`)">立即付款</XtxButton>
-        <XtxButton v-if="order.orderState===3" type="primary" size="small">确认收货</XtxButton>
+        <XtxButton v-if="order.orderState===3" type="primary" size="small" @click="$emit('confirmOrder', order)">确认收货</XtxButton>
         <p><a href="javascript:;">查看详情</a></p>
         <p v-if="order.orderState===1"><a href="javascript:;" @click="cancelOrder(order.id)">取消订单</a></p>
+        <p v-if="[5, 6].includes(order.orderState)">
+          <a @click="$emit('deleteOrder', order)" href="javascript:;" class="del">删除</a>
+        </p>
         <p v-if="[2,3,4,5].includes(order.orderState)"><a href="javascript:;">再次购买</a></p>
         <p v-if="[4,5].includes(order.orderState)"><a href="javascript:;">申请售后</a></p>
       </div>
@@ -61,9 +64,6 @@
 </template>
 <script>
 import { orderStatus } from '@/api/constants'
-import { ref } from 'vue'
-import dayjs from 'dayjs'
-import { useIntervalFn } from '@vueuse/core'
 import { formatPayTime } from '@/hooks/index.js'
 export default {
   name: 'OrderItem',
@@ -101,10 +101,15 @@ export default {
       emit('cancelOrder', id)
     }
 
+    const delOrder = (v) => {
+      emit('deleteOrder', v)
+    }
+
     return {
       showTime,
       orderStatus,
-      cancelOrder
+      cancelOrder,
+      delOrder
     }
   }
 }
