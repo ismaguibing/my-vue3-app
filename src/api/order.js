@@ -67,3 +67,17 @@ export const findOrder = id => {
 export const findOrderList = ({ orderState = 0, page = 1, pageSize = 10 }) => {
   return _axios({ url: '/member/order', method: 'get', params: { orderState, page, pageSize } })
 }
+
+/**
+ * 取消订单
+ * @param {String} orderId - 订单ID
+ * @param {String} cancelReason - 取消原因
+ * @returns Promise
+ */
+export const cancelOrder = (orderId, cancelReason) => {
+  return _axios({
+    method: 'put',
+    url: `/member/order/${orderId}/cancel`,
+    data: { cancelReason }
+  })
+}

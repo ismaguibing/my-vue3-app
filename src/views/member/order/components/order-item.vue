@@ -49,10 +49,10 @@
         <!-- 待评价：查看详情，再次购买，申请售后 -->
         <!-- 已完成：查看详情，再次购买，申请售后 -->
         <!-- 已取消：查看详情 -->
-        <XtxButton v-if="order.orderState===1" type="primary" size="small">立即付款</XtxButton>
+        <XtxButton v-if="order.orderState===1" type="primary" size="small" @click="$router.push(`/member/pay?id=${order.id}`)">立即付款</XtxButton>
         <XtxButton v-if="order.orderState===3" type="primary" size="small">确认收货</XtxButton>
         <p><a href="javascript:;">查看详情</a></p>
-        <p v-if="order.orderState===1"><a href="javascript:;">取消订单</a></p>
+        <p v-if="order.orderState===1"><a href="javascript:;" @click="cancelOrder(order.id)">取消订单</a></p>
         <p v-if="[2,3,4,5].includes(order.orderState)"><a href="javascript:;">再次购买</a></p>
         <p v-if="[4,5].includes(order.orderState)"><a href="javascript:;">申请售后</a></p>
       </div>
@@ -73,7 +73,7 @@ export default {
       default: () => ({})
     }
   },
-  setup (props) {
+  setup (props, { emit }) {
     // 1. order.payLatestTime 最后支付时间
     // 2. 需要求出倒计时的秒数
     // 3. 使用 useIntervalFn 进行倒计时
@@ -96,9 +96,15 @@ export default {
     const { showTime, start } = formatPayTime()
     start(props.order.countdown)
 
+    // 取消订单cancelOrder 父组件做 （子传父）
+    const cancelOrder = (id) => {
+      emit('cancelOrder', id)
+    }
+
     return {
       showTime,
-      orderStatus
+      orderStatus,
+      cancelOrder
     }
   }
 }

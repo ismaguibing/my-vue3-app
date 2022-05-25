@@ -6,11 +6,14 @@
   <div class="order-list">
     <div v-if="loading" class="loading"></div>
     <div class="none" v-if="!loading && orderList.length === 0">暂无数据</div>
-    <OrderItem v-for="v in orderList" :key="v" :order='v'></OrderItem>
+    <OrderItem v-for="v in orderList" :key="v" :order='v' @cancelOrder='cancelOrder'></OrderItem>
   </div>
 
   <!-- 分页 -->
   <XtxPagination :current='reqParams.page' :size='reqParams.pageSize' :total='total' @current-change="currentchange"></XtxPagination>
+
+  <!-- 取消dialog -->
+  <OrderCancel ref="target"></OrderCancel>
 </template>
 
 <script>
@@ -18,9 +21,11 @@ import { reactive, ref, watch } from 'vue'
 import { orderStatus } from '@/api/constants'
 import { findOrderList } from '@/api/order.js'
 import OrderItem from './components/order-item.vue'
+import OrderCancel from './components/order-cancel.vue'
 export default {
   components: {
-    OrderItem
+    OrderItem,
+    OrderCancel
   },
 
   setup () {
@@ -53,6 +58,11 @@ export default {
       reqParams.page = v
     }
 
+    const target = ref(null)
+    const cancelOrder = (v) => {
+      target.value.open({ id: v })
+    }
+
     return {
       activeName,
       orderStatus,
@@ -61,7 +71,9 @@ export default {
       total,
       loading,
       tabclickFn,
-      currentchange
+      currentchange,
+      cancelOrder,
+      target
     }
   }
 }

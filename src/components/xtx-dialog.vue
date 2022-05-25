@@ -38,7 +38,7 @@ export default {
       setTimeout(() => {
         fade.value = v
       }, 500)
-    })
+    }, { immediate: true })
 
     const close = () => {
       emit('update:visible', false)
