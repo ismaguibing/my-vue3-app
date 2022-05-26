@@ -11,12 +11,22 @@
       <XtxStep title="订单完成" :desc="order.endTime" />
     </XtxSteps>
     <!-- 物流栏 -->
+    <suspense>
+      <template #default>
+        <DetailLogistics :order='order'></DetailLogistics>
+      </template>
+      <template #fallback>
+        Loading...
+      </template>
+    </suspense>
 
     <!-- 订单商品信息 -->
   </div>
 </template>
 <script>
 import DetailAction from './components/detail-action'
+import DetailLogistics from './components/detail-logistics.vue'
+
 import { ref } from 'vue'
 import { findOrder } from '@/api/order'
 import { useRoute } from 'vue-router'
@@ -24,7 +34,8 @@ export default {
   name: 'OrderDetailPage',
 
   components: {
-    DetailAction
+    DetailAction,
+    DetailLogistics
   },
 
   setup () {
@@ -33,6 +44,7 @@ export default {
     findOrder(route.params.id).then(data => {
       order.value = data.result
     })
+
     return { order }
   }
 }
