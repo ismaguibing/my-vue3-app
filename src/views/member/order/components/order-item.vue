@@ -60,7 +60,7 @@
         <p v-if="[5, 6].includes(order.orderState)">
           <a @click="$emit('deleteOrder', order)" href="javascript:;" class="del">删除</a>
         </p>
-        <p v-if="[2,3,4,5].includes(order.orderState)"><a href="javascript:;">再次购买</a></p>
+        <p v-if="[2,3,4,5].includes(order.orderState)"><a href="javascript:;" @click="$router.push(`/member/checkout?orderId=${order.id}`)">再次购买</a></p>
         <p v-if="[4,5].includes(order.orderState)"><a href="javascript:;">申请售后</a></p>
       </div>
     </div>

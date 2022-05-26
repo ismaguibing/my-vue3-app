@@ -103,11 +103,11 @@
   </div>
 </template>
 <script>
-import { findCheckoutInfo, createOrder } from '@/api/order'
+import { findCheckoutInfo, createOrder, findOrderRepurchase } from '@/api/order'
 import { provide, reactive, ref } from 'vue'
 import CheckoutAddress from './components/checkout-address.vue'
 import { Message } from '@/components'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 export default {
   name: 'XtxPayCheckoutPage',
 
@@ -118,17 +118,27 @@ export default {
   setup () {
     const info = ref({})
     const router = useRouter()
+    const route = useRoute()
 
     const getAddressList = () => {
-      findCheckoutInfo().then(res => {
-        info.value = res.result
-        reqParams.goods = res.result.goods.map(v => {
-          return {
-            skuId: v.skuId,
-            count: v.count
-          }
+      if (route.query.orderId) {
+        // 再次购买结算
+        findOrderRepurchase(route.query.orderId).then(data => {
+          info.value = data.result
+          // 设置订单商品数据
+          reqParams.goods = data.result.goods.map(({ skuId, count }) => ({ skuId, count }))
         })
-      })
+      } else {
+        findCheckoutInfo().then(res => {
+          info.value = res.result
+          reqParams.goods = res.result.goods.map(v => {
+            return {
+              skuId: v.skuId,
+              count: v.count
+            }
+          })
+        })
+      }
     }
 
     getAddressList()

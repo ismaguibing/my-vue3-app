@@ -83,13 +83,6 @@ export default {
       Message({ text: '删除成功', type: 'success' })
     }
 
-    // 确认收货
-    const confirmOrderA = async (v) => {
-      await confirmOrder(v.id)
-      getOrderList()
-      Message({ text: '确认收货成功', type: 'success' })
-    }
-
     // 查看物流onLogistics
 
     const onLogistics = (v) => {
@@ -109,10 +102,22 @@ export default {
       deleteOrder,
       target,
       logisticsOrderCom,
-      confirmOrderA,
+      ...userFn(),
       onLogistics
     }
   }
+}
+
+export const userFn = () => {
+  // 确认收货
+  const confirmOrderA = async (v) => {
+    await confirmOrder(v.id)
+    //   getOrderList()
+    v.orderState = 4
+    Message({ text: '确认收货成功', type: 'success' })
+  }
+
+  return { confirmOrderA }
 }
 
 </script>
