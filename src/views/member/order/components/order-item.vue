@@ -33,8 +33,8 @@
         <!-- 待收货：查看物流 -->
         <!-- 待评价：评价商品 -->
         <!-- 已完成：查看评价 -->
-        <p v-if="order.orderState===3"><a href="javascript:;" class="green">查看物流</a></p>
-        <p v-if="order.orderState===4"><a href="javascript:;" class="green">评价商品</a></p>
+        <p v-if="order.orderState===3"><a href="javascript:;" class="green" @click=" $emit('onLogistics', order)">查看物流</a></p>
+        <p v-if=" order.orderState===4"><a href="javascript:;" class="green">评价商品</a></p>
         <p v-if="order.orderState===5"><a href="javascript:;" class="green">查看评价</a></p>
       </div>
       <div class="column amount">
@@ -51,7 +51,11 @@
         <!-- 已取消：查看详情 -->
         <XtxButton v-if="order.orderState===1" type="primary" size="small" @click="$router.push(`/member/pay?id=${order.id}`)">立即付款</XtxButton>
         <XtxButton v-if="order.orderState===3" type="primary" size="small" @click="$emit('confirmOrder', order)">确认收货</XtxButton>
-        <p><a href="javascript:;">查看详情</a></p>
+        <p>
+          <RouterLink :to="`/member/order/${order.id}`">
+            查看详情
+          </RouterLink>
+        </p>
         <p v-if="order.orderState===1"><a href="javascript:;" @click="cancelOrder(order.id)">取消订单</a></p>
         <p v-if="[5, 6].includes(order.orderState)">
           <a @click="$emit('deleteOrder', order)" href="javascript:;" class="del">删除</a>

@@ -1,4 +1,5 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, RouterView } from 'vue-router'
+import { h } from 'vue'
 import Layout from '@/views/Layout'
 
 import store from '@/store'
@@ -51,7 +52,19 @@ const routes = [
           {
             // 订单
             path: '/member/order',
-            component: () => import('@/views/member/order')
+            component: { render: () => h(RouterView) },
+            children: [
+              {
+                // 订单
+                path: '/member/order',
+                component: () => import('@/views/member/order')
+              },
+              {
+                // 订单详情
+                path: '/member/order/:id',
+                component: () => import('@/views/member/order/detail')
+              }
+            ]
           }
         ]
       }
@@ -81,7 +94,7 @@ const router = createRouter({
       left: 0
     }
   },
-  linkExactActiveClass: 'active',
+  //   linkExactActiveClass: 'active',
   routes
 })
 

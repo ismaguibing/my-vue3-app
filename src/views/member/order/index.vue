@@ -6,7 +6,7 @@
   <div class="order-list">
     <div v-if="loading" class="loading"></div>
     <div class="none" v-if="!loading && orderList.length === 0">暂无数据</div>
-    <OrderItem v-for="v in orderList" :key="v" :order='v' @cancelOrder='cancelOrder' @deleteOrder='deleteOrder' @confirmOrder='confirmOrderA'></OrderItem>
+    <OrderItem v-for="v in orderList" :key="v" :order='v' @cancelOrder='cancelOrder' @deleteOrder='deleteOrder' @confirmOrder='confirmOrderA' @onLogistics='onLogistics'></OrderItem>
   </div>
 
   <!-- 分页 -->
@@ -14,6 +14,9 @@
 
   <!-- 取消dialog -->
   <OrderCancel ref="target"></OrderCancel>
+
+  <!-- 查看物流 -->
+  <OrderLogistics ref="logisticsOrderCom"></OrderLogistics>
 </template>
 
 <script>
@@ -23,10 +26,12 @@ import { delteOrder, findOrderList, confirmOrder } from '@/api/order.js'
 import { Message } from '@/components'
 import OrderItem from './components/order-item.vue'
 import OrderCancel from './components/order-cancel.vue'
+import OrderLogistics from './components/order-logistics.vue'
 export default {
   components: {
     OrderItem,
-    OrderCancel
+    OrderCancel,
+    OrderLogistics
   },
 
   setup () {
@@ -64,6 +69,7 @@ export default {
     }
 
     const target = ref(null)
+    const logisticsOrderCom = ref(null)
 
     // 取消订单
     const cancelOrder = (v) => {
@@ -84,6 +90,12 @@ export default {
       Message({ text: '确认收货成功', type: 'success' })
     }
 
+    // 查看物流onLogistics
+
+    const onLogistics = (v) => {
+      logisticsOrderCom.value.open(v)
+    }
+
     return {
       activeName,
       orderStatus,
@@ -96,7 +108,9 @@ export default {
       cancelOrder,
       deleteOrder,
       target,
-      confirmOrderA
+      logisticsOrderCom,
+      confirmOrderA,
+      onLogistics
     }
   }
 }

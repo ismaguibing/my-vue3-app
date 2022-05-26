@@ -106,3 +106,15 @@ export const confirmOrder = orderId => {
     url: `/member/order/${orderId}/receipt`
   })
 }
+
+/**
+ * 查看物流
+ * @param {String} id - 订单ID
+ * @returns
+ */
+export const logisticsOrder = id => {
+  return _axios({
+    url: `/member/order/${id}/logistics`,
+    method: 'get'
+  })
+}
