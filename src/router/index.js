@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory, RouterView } from 'vue-router'
 import { h } from 'vue'
 import Layout from '@/views/Layout'
-
+import NProgress from '@/config/nprogress'
 import store from '@/store'
 const routes = [
   {
@@ -10,6 +10,7 @@ const routes = [
     children: [
       {
         path: '',
+        // redirect: '/test',
         component: () => import('@/views/Home')
       },
       {
@@ -101,6 +102,7 @@ const router = createRouter({
 // 配置路由导航守卫，拦截 /member开头的所有的地址
 router.beforeEach((to, from, next) => {
   // 判断用户登没登录
+  NProgress.start()
   const token = store.state.user.proFile.token
   if (token) {
     next()
@@ -114,10 +116,15 @@ router.beforeEach((to, from, next) => {
           redirectUrl: to.fullPath
         }
       })
+      NProgress.done()
     } else {
       next()
     }
   }
+})
+
+router.afterEach(() => {
+  NProgress.done()
 })
 
 export default router

@@ -16,6 +16,7 @@
     "global": "^4.4.0",
     "json-server": "^0.17.0",
     "mockjs": "^1.1.0",
+    "nprogress": "^0.2.0",
     "normalize.css": "^8.0.1",
     "remixicon": "^2.5.0",
     "vee-validate": "4.0.3",
